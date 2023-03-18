@@ -1,0 +1,17 @@
+{
+    "data": [ 
+        {"name": "Catálogo de errores", "code": 0}, 
+        {"name": "Registrar un ingreso de Ingresos Propios", "code": 1}, 
+        {"name": "Registrar un ingreso de Fondo Rotatorio", "code": 2}, 
+        {"name": "Modificar registro de Ingresos Propios", "code": 3}, 
+        {"name": "Modificar registro de Fondo Rotatorio", "code": 4}, 
+        {"name": "Generar Reporte PDF de los registros de ingresos", "code": 5},
+        {"name": "Generar Reporte Excel de los registros de ingresos", "code": 6},
+        {"name": "Anular o activar un registro de ingresos", "code": 7}, 
+        {"name": "Imprimir en PDF un recibo de ingresos", "code": 8},
+        {"name": "Imprimir en Matricial un recibo de ingresos", "code": 9},
+        {"name": "¿Cómo usar los filtros de la lista de registros?", "code": 10}, 
+        {"name": "Supervisor: Agregar un nuevo correlativo", "code": 11}, 
+        {"name": "Supervisor: Modificar los N° de docs", "code": 12}
+    ]
+}
