@@ -575,12 +575,7 @@ export default {
     cambioNombreClasificador(event, clasificador) {
       if (event.value.Descripcion) {
         clasificador.Codigo = event.value.CodClasificadorArea;
-        // if (this.ValueTipo.Codigo == 1) {
         this.IdParametro = clasificador.Descripcion.IdParametro;
-        // }
-        // if (this.ValueTipo.Codigo == 3) {
-        //   this.IdParametro = clasificador.Descripcion.IdParametro;
-        // }
       }
     },
     cambioCodigoClasificador(event, clasificador) {
