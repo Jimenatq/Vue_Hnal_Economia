@@ -7,6 +7,7 @@ import './assets/demo/flags/flags.css';
 
 import { createApp, reactive } from 'vue';
 import router from './router';
+import axios from "axios";
 import AppWrapper from './AppWrapper.vue';
 import PrimeVue from 'primevue/config';
 import AutoComplete from 'primevue/autocomplete';
@@ -213,3 +214,8 @@ app.component('TriStateCheckbox', TriStateCheckbox);
 app.component('BlockViewer', BlockViewer);
 
 app.mount('#app');
+
+var token = localStorage.getItem('token');
+if(token){
+  axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
+}

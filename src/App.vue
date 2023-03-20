@@ -36,7 +36,7 @@ export default {
                 {
                     label: 'Home',
                     items: [
-                        // {label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/'},
+                        {label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/dashboard'},
                         // {label: 'Registro', icon: 'pi pi-fw pi-id-card', to: '/formlayout1'},
                         {label: 'Ingresos Propios', icon: 'pi pi-fw pi-list', to: '/listregistroip'},
                         {label: 'Fondo Rotatorio', icon: 'pi pi-fw pi-list', to: '/listregistrofr'},
@@ -79,6 +79,7 @@ export default {
                     //    {label: 'PrimeIcons', icon: 'pi pi-fw pi-prime', to: '/icons'},
                 //         {label: 'PrimeFlex', icon: 'pi pi-fw pi-desktop', url: 'https://www.primefaces.org/primeflex/', target: '_blank'},
                 // {label: 'Login', icon: 'pi pi-fw pi-sign-in', to: '/login'},
+                         {label: 'Access Denied', icon: 'pi pi-fw pi-lock', to: '/access'},
                     ]
                 },
 				// {
@@ -90,7 +91,6 @@ export default {
                 //         {label: 'Landing', icon: 'pi pi-fw pi-globe', to: '/landing'},
                 //         {label: 'Error', icon: 'pi pi-fw pi-times-circle', to: '/error'},
                 //         {label: 'Not Found', icon: 'pi pi-fw pi-exclamation-circle', to: '/notfound'},
-                //         {label: 'Access Denied', icon: 'pi pi-fw pi-lock', to: '/access'},
 				// 		{label: 'Empty', icon: 'pi pi-fw pi-circle-off', to: '/empty'},
 				// 	]
 				// },

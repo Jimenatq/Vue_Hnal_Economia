@@ -59,6 +59,16 @@ export default {
   },
   login: null,
   methods: {
+    obtenerRolesPorUsuario(IdUsuario){
+      this.login.getUsuarioConRoles(IdUsuario)
+      .then(data=>{
+        this.userConRoles = data;
+      })
+      .catch(()=>{
+        this.message ="No se pudo cargar la lista del usuario con sus roles.";
+        this.mensajeErrorDialog = true;
+      })
+    },
     footerImage() {
       return this.$appState.darkTheme ? 'images/logo.png' : 'images/logo.png';
     },
@@ -72,13 +82,14 @@ export default {
       this.login.validarUsuario(user)
         .then(data => {
           this.cargando = false;
-          if(data){
-            this.message = data;
+          if(data.error){
+            this.message = data.error;
             this.mensajeErrorDialog = true;
           }
           else{
             console.log("Credenciales correctas")
-            router.push({ path: '/listregistroip' });
+            this.login.guardarToken(data);
+            router.push({ path: '/dashboard' });
           }
         })
         .catch(err => {

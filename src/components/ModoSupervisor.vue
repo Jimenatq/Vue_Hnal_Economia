@@ -72,8 +72,8 @@
 					</Column>
 					<Column header="Opciones" style="min-width:2rem">
 						<template #body="{data}">
-							<Button icon="pi pi-pencil" class="p-button-rounded p-button-secondary mr-2" @click="editarUsuarioDialog=true,usuario=data" />
-              <Button icon="pi pi-trash" class="p-button-rounded p-button-danger mr-2" @click="eliminarUsuario(data.IdUsuario)" />
+							<Button icon="pi pi-pencil" class="p-button-rounded p-button-secondary mr-2" @click="abrirEditarUsuario(data)" />
+              <!-- <Button icon="pi pi-trash" class="p-button-rounded p-button-danger mr-2" @click="eliminarUsuario(data.IdUsuario)" /> -->
 						</template>
 					</Column>
 				</DataTable>
@@ -109,20 +109,22 @@
 					<div class="align-items-center justify-content-center" :style="{padding: '0 40px'}">
 						Usuario:  {{usuario.Usuario}}
             <br/>
+            <br/>
             Nombres Completos: {{usuario.NombresCompletos}}
-            {{ asignarValores(usuario)}}
+            <br/>
+            <br/>
             <AutoComplete placeholder="Ingrese un rol" id="dd" :dropdown="true" :multiple="false"
               v-model="descripcion" :suggestions="autoFilteredValue"
               @change="asignarValorRol($event,usuario)"
               @complete="buscarRoles($event)" field="Descripcion" />
-            <Button id="button-agregar" v-tooltip="'Agregar Rol'" icon="pi pi-plus" class="p-button-help mr-2 mt-1-8"
+            <Button id="button-agregar" v-tooltip="'Agregar Rol'" icon="pi pi-plus" class="p-button-help mr-2 mb-2 mt-1-8"
               @click="agregarRol()" />
               <div class="field col-12 grid" :key="i + 'neo'" v-for="(userRol, i) of listaRolesUsuario">
-                <div class="field col-12 md:col-9">
+                <div class="field col-12 md:col-9 m-0">
                   {{ userRol.Descripcion }}
                 </div>
-                <div class="field col-12 md:col-3">
-                  <Button icon="pi pi-times" v-tooltip="'Eliminar rol'" class="p-button-danger mr-2" @click="eliminarRol(userRol.IdUsuarioRol,i)" />
+                <div class="field col-12 md:col-3 m-0">
+                  <Button icon="pi pi-times" v-tooltip="'Eliminar rol'" class="p-button-danger mr-2" @click="eliminarRol(userRol.IdUsuarioRol)" />
                 </div>
               </div>
             <br />
@@ -197,6 +199,25 @@ export default {
 	},
   supervisor: null,
 	methods: {
+    obtenerRolesPorUsuario(usuario){
+      const datos={
+        IdUsuario: usuario.IdUsuario
+      }
+      this.supervisor.getListaRolesPorUsuario(datos)
+      .then(data=>{
+        this.listaRolesUsuario=data;
+      })
+      .catch(error=>{
+        this.message=error;
+        this.mensajeErrorDialog=true;
+      })
+    },
+    abrirEditarUsuario(data){
+      this.descripcion = null;
+      this.editarUsuarioDialog=true;
+      this.usuario=data;
+      this.obtenerRolesPorUsuario(this.usuario);
+    },
     eliminarUsuario(IdUsuario){
       this.cargando=true;
       this.supervisor.eliminarUsuario(IdUsuario)
@@ -212,16 +233,13 @@ export default {
         this.mensajeErrorDialog=true;
       })
     },
-    asignarValores(usuario){
-      this.listaRolesUsuario = usuario.listRoles
-    },
-    eliminarRol(IdUsuarioRol,i){
+    eliminarRol(IdUsuarioRol){
       this.cargando=true;
       this.supervisor.eliminarRolUsuario(IdUsuarioRol)
       .then(async(data)=>{
         this.cargando=false;
-        this.listaRolesUsuario.splice(i,1);
         await this.obtenerListaUsuarios();
+        this.obtenerRolesPorUsuario(this.usuario);
         this.message=data;
         this.mensajeDialog=true;
       })
@@ -240,8 +258,11 @@ export default {
             IdUsuario: this.IdUsuario
           }
           this.supervisor.agregarRolUsuario(rol)
-          .then(data=>{
+          .then(async(data)=>{
+            this.descripcion=null;
             this.cargando=false;
+            await this.obtenerListaUsuarios();
+            this.obtenerRolesPorUsuario(this.usuario);
             this.message=data;
             this.mensajeDialog=true;
           })

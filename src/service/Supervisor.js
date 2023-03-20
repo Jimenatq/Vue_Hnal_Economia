@@ -49,4 +49,11 @@ export default class Supervisor {
       .delete('http://localhost:49146/api/Usuarios/roles/'+id).then(d => d.data);
       //.delete('http://192.168.36.121:8081/api/Usuarios/roles',id).then(d => d.data);
   }
+
+  async getListaRolesPorUsuario(usuario){
+    return await axios
+      .post('http://localhost:49146/api/Usuarios/rolesporusuario',usuario).then(d => d.data);
+      //.post('http://192.168.36.121:8081/api/Usuarios/rolesporusuario',usuario).then(d => d.data);
+  }
+
 }

@@ -8,7 +8,7 @@ const routes = [
         component: App,
         children: [
             {
-                path: '',
+                path: '/dashboard',
                 name: 'dashboard',
                 component: () => import('./components/Dashboard.vue')
             },
