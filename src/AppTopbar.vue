@@ -14,7 +14,7 @@
 			<i class="pi pi-ellipsis-v"></i>
 		</button>
 		<ul class="layout-topbar-menu hidden lg:flex origin-top">
-			<li>
+			<!-- <li>
 				<button class="p-link layout-topbar-button">
 					<i class="pi pi-calendar"></i>
 					<span>Events</span>
@@ -25,11 +25,12 @@
 					<i class="pi pi-cog"></i>
 					<span>Settings</span>
 				</button>
-			</li>
+			</li> -->
 			<li>
-				<button class="p-link layout-topbar-button">
-					<i class="pi pi-user"></i>
-					<span>Profile</span>
+				<button class="p-link layout-topbar-button danger" v-tooltip.left="'Cerrar Sesión'"
+					@click="$store.commit('logout')">
+					<i class="pi pi-user-minus"></i>
+					<span>Cerrar Sesión</span>
 				</button>
 			</li>
 		</ul>
@@ -56,3 +57,9 @@ export default {
 	}
 }
 </script>
+<style>
+	.danger{
+		background-color: rgb(231, 76, 76) !important;
+		color: rgb(252, 251, 251) !important;
+	}
+</style>

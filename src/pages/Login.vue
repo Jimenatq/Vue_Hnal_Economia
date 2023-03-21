@@ -44,7 +44,9 @@
 
 <script>
 import Login from "../service/Login.js";
-import router from '../router';
+// import router from '../router';
+import axios from "axios";  
+// import store from '../storage';
 
 export default {
   data() {
@@ -88,8 +90,13 @@ export default {
           }
           else{
             console.log("Credenciales correctas")
-            this.login.guardarToken(data);
-            router.push({ path: '/dashboard' });
+            // this.login.guardarToken(data);
+            axios.defaults.headers.common['Authorization'] = 'Bearer '+ data.token;
+            localStorage.setItem('token', data.token);
+            this.$store.commit('setAuthenticated',true);
+            this.$store.commit('setUserName', data.userData.userName);
+            this.$store.commit('setNameCompleto', data.userData.NameCompleto);
+            this.$router.push({ path: '/home' });
           }
         })
         .catch(err => {

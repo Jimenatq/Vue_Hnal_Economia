@@ -198,10 +198,18 @@ export default {
 		}
 	},
   supervisor: null,
+  computed:{
+    isAuthenticated(){
+      return localStorage.getItem('token');
+    },
+  },
 	methods: {
+    noLogin(){
+      if(!this.isAuthenticated){this.$router.push({ path: '/login' })}
+    },
     obtenerRolesPorUsuario(usuario){
       const datos={
-        IdUsuario: usuario.IdUsuario
+        Usuario: usuario.Usuario
       }
       this.supervisor.getListaRolesPorUsuario(datos)
       .then(data=>{
@@ -394,6 +402,7 @@ export default {
       }
     },
     created: function(){
+      this.noLogin();
       this.supervisor = new Supervisor();
       this.obtenerTablaCorrelativo();
       this.obtenerListaUsuarios();

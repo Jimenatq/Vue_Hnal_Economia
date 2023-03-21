@@ -471,7 +471,7 @@ export default {
       MontoNotaAbono: null,
       NombreBanco: null,
       TextoGlosa: null,
-      UsuarioCreacion: null,
+      UsuarioCreacion: this.$store.state.userName,
       FechaCreacion: new Date(),
       UsuarioModificacion: null,
       FechaModificacion: null,
@@ -3898,7 +3898,7 @@ export default {
         this.TextoGlosa = this.title.registro.TextoGlosa,
         this.UsuarioCreacion = this.title.registro.UsuarioCreacion,
         this.FechaCreacion = this.title.registro.FechaCreacion,
-        this.UsuarioModificacion = this.title.registro.UsuarioModificacion,
+        this.UsuarioModificacion = this.$store.state.userName,
         this.FechaModificacion = new Date(),
         this.Anulado = this.title.registro.Anulado,
       this.title.registro.listBoletas.forEach((element) => {

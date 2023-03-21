@@ -5,6 +5,7 @@ import 'prismjs/themes/prism-coy.css';
 import './assets/styles/layout.scss';
 import './assets/demo/flags/flags.css';
 
+import storage from './storage';
 import { createApp, reactive } from 'vue';
 import router from './router';
 import axios from "axios";
@@ -125,6 +126,7 @@ app.use(PrimeVue,
 app.use(ConfirmationService);
 app.use(ToastService);
 app.use(router);
+app.use(storage);
 
 app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);

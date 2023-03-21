@@ -20,11 +20,14 @@ export default class Login {
       // .get('http://192.168.36.121:8081/api/usuarios/usuarioconroles/'+id).then(d => d.data);
   }
 
-  guardarToken(data){
-    axios.defaults.headers.common['Authorization'] = 'Bearer '+ data.token;
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('NameCompleto', data.token.NameCompleto);
-    localStorage.setItem('userName', data.token.userName);
-  }
+  // guardarToken(data){
+  //   axios.defaults.headers.common['Authorization'] = 'Bearer '+ data.token;
+  //   localStorage.setItem('token', data.token);
+  //   localStorage.setItem('NameCompleto', data.userData.NameCompleto);
+  //   localStorage.setItem('userName', data.userData.userName);
+  //   localStorage.setItem('isAuthenticated','S');
+  //   this.$store.commit('setAuthenticated',true);
+  //   this.$store.commit('setUserData', data.userData.NameCompleto, data.userData.userName);
+  // }
 
 }

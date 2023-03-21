@@ -2,12 +2,14 @@
 	<div :class="containerClass" @click="onWrapperClick">
         <AppTopBar @menu-toggle="onMenuToggle" />
         <div class="layout-sidebar" @click="onSidebarClick">
-            <AppMenu :model="menu" @menuitem-click="onMenuItemClick" />
+            <AppMenu :model="menu"  @menuitem-click="onMenuItemClick" />
         </div>
 
         <div class="layout-main-container">
             <div class="layout-main">
                 <router-view />
+                <!-- v-if = "$store.state.isAuthenticated" -->
+                
             </div>
             <AppFooter />
         </div>
@@ -23,11 +25,13 @@ import AppTopBar from './AppTopbar.vue';
 import AppMenu from './AppMenu.vue';
 import AppConfig from './AppConfig.vue';
 import AppFooter from './AppFooter.vue';
+import Supervisor from "./service/Supervisor.js";
 
 export default {
     emits: ['change-theme'],
     data() {
         return {
+            listaRoles: [],
             layoutMode: 'static',
             staticMenuInactive: false,
             overlayMenuActive: false,
@@ -36,10 +40,11 @@ export default {
                 {
                     label: 'Home',
                     items: [
-                        {label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/dashboard'},
+                        {label: 'Home', icon: 'pi pi-fw pi-home', to: '/home'},
+                        // {label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/dashboard'},
                         // {label: 'Registro', icon: 'pi pi-fw pi-id-card', to: '/formlayout1'},
-                        {label: 'Ingresos Propios', icon: 'pi pi-fw pi-list', to: '/listregistroip'},
-                        {label: 'Fondo Rotatorio', icon: 'pi pi-fw pi-list', to: '/listregistrofr'},
+                        // {label: 'Ingresos Propios', icon: 'pi pi-fw pi-list', to: '/listregistroip'},
+                        // {label: 'Fondo Rotatorio', icon: 'pi pi-fw pi-list', to: '/listregistrofr'},
                         // {label: 'Form Layout', icon: 'pi pi-fw pi-id-card', to: '/formlayout'},
                     // ]
                 // },
@@ -52,8 +57,8 @@ export default {
                 //         {label: "Invalid State", icon: "pi pi-fw pi-exclamation-circle", to: "/invalidstate"},
 						// {label: 'Button', icon: 'pi pi-fw pi-mobile', to: '/button'},
 						// {label: 'Table', icon: 'pi pi-fw pi-table', to: '/table'},
-                        {label: 'Modo Supervisor', icon: 'pi pi-fw pi-id-card', to: '/supervisor'},
-                        {label: 'Guia para el Usuario', icon: 'pi pi-fw pi-book', to: '/guia'},
+                        // {label: 'Modo Supervisor', icon: 'pi pi-fw pi-id-card', to: '/supervisor'},
+                        // {label: 'Guia para el Usuario', icon: 'pi pi-fw pi-book', to: '/guia'},
 						// {label: 'List', icon: 'pi pi-fw pi-list', to: '/list'},
 				// 		{label: 'Tree', icon: 'pi pi-fw pi-share-alt', to: '/tree'},
 				// 		{label: 'Panel', icon: 'pi pi-fw pi-tablet', to: '/panel'},
@@ -149,13 +154,57 @@ export default {
             ]
         }
     },
+    supervisor: null,
     watch: {
         $route() {
             this.menuActive = false;
             this.$toast.removeAllGroups();
         }
     },
-    methods: {
+    methods: { 
+        async validarRoles(){
+            const datos={
+                Usuario: this.$store.state.userName
+            }
+            await this.supervisor.getListaRolesPorUsuario(datos)
+            .then(data=>{
+                this.listaRoles = data;
+                console.log(this.listaRoles.length)
+                if(this.listaRoles.length==0){
+                    this.menu.push({items: [
+                        {label: 'Guia para el Usuario', icon: 'pi pi-fw pi-book', to: '/guia'}
+                    ]})
+                }
+                else{
+                    this.listaRoles.forEach(element => {
+                        if(element.Descripcion == 'Supervisor'){
+                            this.menu.push({items: [
+                                {label: 'Ingresos Propios', icon: 'pi pi-fw pi-list', to: '/listregistroip'},
+                                {label: 'Fondo Rotatorio', icon: 'pi pi-fw pi-list', to: '/listregistrofr'},
+                                {label: 'Modo Supervisor', icon: 'pi pi-fw pi-id-card', to: '/supervisor'},
+                            ]})
+                        }
+                        else if(element.Descripcion == 'Fondo Rotatorio'){
+                            this.menu.push({items: [
+                                {label: 'Fondo Rotatorio', icon: 'pi pi-fw pi-list', to: '/listregistrofr'},
+                            ]})
+                        }
+                        else if(element.Descripcion == 'Ingresos Propios'){
+                            this.menu.push({items: [
+                                {label: 'Ingresos Propios', icon: 'pi pi-fw pi-list', to: '/listregistroip'},
+                            ]})
+                        }
+                })
+                this.menu.push({items: [
+                                    {label: 'Guia para el Usuario', icon: 'pi pi-fw pi-book', to: '/guia'}
+                                ]
+                            });
+        }})},
+        // esUsuarioConRoles(){
+        //     console.log(this.listaRoles.length)
+            
+        //     }
+        // },
         onWrapperClick() {
             if (!this.menuClick) {
                 this.overlayMenuActive = false;
@@ -225,6 +274,9 @@ export default {
         }
     },
     computed: {
+        isAuthenticated(){
+            return localStorage.getItem('token');
+        },
         containerClass() {
             return ['layout-wrapper', {
                 'layout-overlay': this.layoutMode === 'overlay',
@@ -251,6 +303,14 @@ export default {
         'AppMenu': AppMenu,
         'AppConfig': AppConfig,
         'AppFooter': AppFooter,
+    },
+    created() {
+        console.log('created')
+        this.supervisor = new Supervisor();
+        this.validarRoles();
+    },
+    mounted(){
+        console.log('beforeMount')
     }
 }
 </script>

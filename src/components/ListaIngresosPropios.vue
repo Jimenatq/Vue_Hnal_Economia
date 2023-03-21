@@ -252,6 +252,9 @@ export default {
 		"registro": registro, 
 	},
 	methods: {
+    noLogin(){
+      if(!this.$store.state.isAuthenticated){this.$router.push({ path: '/login' })}
+    },
     formatoAnulado(registro){
       if(registro.Anulado){
         return "Anulado"
@@ -3474,6 +3477,7 @@ export default {
 		}
 	},
 	created(){
+    this.noLogin();
     this.ingresosPropios = new IngresosPropios();
 		this.obtenerRegistros();
 		this.tiposFiltros();

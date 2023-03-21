@@ -8,6 +8,11 @@ const routes = [
         component: App,
         children: [
             {
+                path: '/home',
+                name: 'home',
+                component: () => import('./components/Home.vue')
+            },
+            {
                 path: '/dashboard',
                 name: 'dashboard',
                 component: () => import('./components/Dashboard.vue')

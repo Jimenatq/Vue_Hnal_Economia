@@ -202,6 +202,7 @@ import pdfFonts from "pdfmake/build/vfs_fonts";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 import FondoRotatorio from "../service/FondoRotatorio.js";
 import exportFromJSON from "export-from-json";
+import Supervisor from '../service/Supervisor';
 
 export default {
 	data() {
@@ -285,10 +286,36 @@ export default {
 		}
 	},
   fondoRotatorio: null,
+  supervisor: null,
 	components:{
 		"registro": registro, 
 	},
 	methods: {
+		validarRoles(){
+      console.log(this.$store.state.userName)
+      if(this.$store.state.isAuthenticated){
+        const username = {
+          Usuario: this.$store.state.userName
+        }
+        this.supervisor.getListaRolesPorUsuario(username)
+        .then(data=>{
+          console.log(data)
+          if(data.length==0){
+            this.$router.push({ path: '/access' })
+          }
+          else{
+            this.listaRoles.forEach(element => {
+              if(element.Descripcion != 'Fondo Rotatorio'){
+                this.$router.push({ path: '/access' })
+              }
+            })
+          }
+        })
+      }
+    },
+    noLogin(){
+      if(!this.$store.state.isAuthenticated){this.$router.push({ path: '/login' })}
+    },
     verificarSupervisor(){
       this.motivoDialog=true;
     },
@@ -4414,6 +4441,9 @@ export default {
 		}
 	},
 	created(){
+    this.noLogin();
+    this.supervisor = new Supervisor();
+    this.validarRoles();
     this.fondoRotatorio = new FondoRotatorio();
 		this.obtenerRegistros();
 		this.tiposFiltros();
