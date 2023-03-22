@@ -23,7 +23,7 @@
           </div>
           <div class="field col-1 p-0">
             <Button id="button-editar" v-tooltip="'Editar N° recibo'" icon="pi pi-pencil" class="p-button-secondary mr-2 mt-1-8"
-              @click="editarNroRecibo()" />
+              @click="esSupervisorGlobal()" />
           </div>
           <div class="field col-3">
             <label for="state">Fecha</label>
@@ -400,6 +400,31 @@
 						<Button label="Aceptar" icon="pi pi-check" class="p-button-rounded p-button-success" @click="eliminarClasifDefinit(clasif)" />
 					</template>
 				</Dialog>
+        <Dialog v-model:visible="supervisorDialog" :style="{width: '450px'}" header="Ingrese Supervisor" :modal="true">
+					<div class="align-items-center justify-content-center" :style="{padding: '0 40px'}">
+						<p>Ingrese el usuario Supervisor:</p>
+            <InputText v-model="usuario" type="text" class="w-full mb-3" placeholder="Ingrese el usuario" 
+            :class="{ 'p-invalid': ingresoCredenciales && !usuario}"></InputText>
+            <br />
+            <p>Ingrese la clave:</p>
+						<Password id="password1" v-model="clave" placeholder="Ingrese su clave" :toggleMask="true" :feedback="false" class="w-full mb-3" inputClass="w-full"
+              :class="{ 'p-invalid': ingresoCredenciales && !clave}"></Password>
+					</div>
+          <span v-if="cargandoSupervisor" class="flex justify-content-center mb-4"><i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i></span>
+					<template #footer>
+						<Button label="Cancelar" icon="pi pi-times" class="p-button-rounded p-button-secondary" @click="supervisorDialog = false"/>
+						<Button label="Aceptar" icon="pi pi-check" class="p-button-rounded p-button-success" @click="verificarSupervisor()" />
+					</template>
+				</Dialog>
+        <Dialog v-model:visible="mensajeErrorDialog" :style="{width: '450px'}" header="Mensaje" :modal="true" :closable="false">
+					<div class="align-items-center justify-content-center" :style="{padding: '0 40px'}">
+            <p><i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+            {{ message }}</p>
+					</div>
+					<template #footer>
+						<Button label="Aceptar" icon="pi pi-check" class="p-button-rounded p-button-danger" @click="mensajeErrorDialog=false" />
+					</template>
+				</Dialog>
     </div>
   </div>
 </template>
@@ -409,6 +434,10 @@ import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 import axios from "axios";
+import Login from "../service/Login.js";
+import Supervisor from "../service/Supervisor.js";
+import Formulario from "../service/Formulario.js";
+
 export default {
   props:
   {
@@ -423,13 +452,7 @@ export default {
     return {
       message: null,
       mensajeDialog:false,
-      URLTipos: "http://http://192.168.36.121:8081/api/Parametros/Tipos",
-      URLSubtiposIP: "http://192.168.36.121:8081/api/Parametros/SubtiposIP",
-      URLSubtiposFR: "http://192.168.36.121:8081/api/Parametros/SubtiposFR",
-      URLClasificadores: "http://192.168.36.121:8081/api/Parametros/Clasificadores",
-      URLRegistros: "http://192.168.36.121:8081/api/registros/",
-      URLCorrelativo: "http://192.168.36.121:8081/api/correlativo/consulta",
-      URLCorrelativoPut: "http://192.168.36.121:8081/api/correlativo/modificar",
+      mensajeErrorDialog: false,
       TipoRegistro: null,
       SubtipoIP: null,
       SubtipoFR: null,
@@ -498,28 +521,133 @@ export default {
       confirmaEliminacionDialog: false,
       clasif: null,
       id: null,
+      listaRoles: [],
+      listaDescripcionRoles: [],
+      supervisorDialog: false,
+      usuario: null,
+      clave: null,
+      cargandoSupervisor: false,
+      ingresoCredenciales: false
     };
   },
+  login: null,
+  supervisor: null,
+  formulario: null,
   methods: {
+    //si inicia sesion con usuario supervisor no pedira credenciales para nada
+    esSupervisorGlobal(){
+      const username = {
+        Usuario: this.$store.state.userName
+      }
+      this.supervisor.getListaRolesPorUsuario(username)
+      .then(data=>{
+        let listaRolesUser = data;
+        if(listaRolesUser.length!=0){
+          let listaDescripcionRol = [];
+          listaRolesUser.map((element)=>{
+            listaDescripcionRol.push(element.Descripcion);
+          })
+          let existeRolSupervisor = listaDescripcionRol.includes('Supervisor');
+          if(existeRolSupervisor){
+            this.editarNroRecibo();
+          }
+          else{
+            this.abrirDialogSupervisor();
+          }
+        }
+      })
+      .catch(error=>{
+        this.message = error;
+        this.mensajeErrorDialog = true;
+      })
+    },
+    esSupervisor(user){
+      const username = {
+          Usuario: user
+        }
+        this.supervisor.getListaRolesPorUsuario(username)
+        .then(data=>{
+          let listaRolesUser = data;
+          if(listaRolesUser.length==0){
+            this.message = "El usuario no tiene roles asignados";
+            this.mensajeErrorDialog = true;
+          }
+          else{
+            let listaDescripcionRol = [];
+            listaRolesUser.map((element)=>{
+              listaDescripcionRol.push(element.Descripcion);
+            })
+            let existeRolSupervisor = listaDescripcionRol.includes('Supervisor');
+            if(existeRolSupervisor){
+              this.editarNroRecibo();
+              this.supervisorDialog = false;
+            }
+            else{
+              this.message = "El usuario no es supervisor, intente de nuevo con un usuario supervisor.";
+              this.mensajeErrorDialog = true;
+            }
+          }
+        })
+        .catch(error=>{
+          this.message = error;
+          this.mensajeErrorDialog = true;
+        })
+    },
+    verificarSupervisor(){
+      this.cargandoSupervisor = true;
+      this.ingresoCredenciales = true;
+      const user = {
+        Usuario: this.usuario,
+        Clave: this.clave
+      }
+      this.login.validarUsuario(user)
+        .then(data => {
+          this.cargandoSupervisor = false;
+          if(data.error){
+            this.message = data.error;
+            this.mensajeErrorDialog = true;
+          }
+          else{
+            //validamos si es supervisor
+            this.esSupervisor(this.usuario);
+          }
+        })
+        .catch(err => {
+          this.cargandoSupervisor = false;
+          this.message = err + ". Ha ocurrido un error, actualice la pág por favor.";
+          this.mensajeErrorDialog = true;
+        })
+    },
+    abrirDialogSupervisor(){
+      if(this.disabled){
+        this.supervisorDialog = true;
+        this.usuario = null;
+        this.clave = null;
+        this.cargandoSupervisor = false;
+        this.ingresoCredenciales = false;
+      }
+      else{
+        this.editarNroRecibo();
+      }
+    },
     cerrarMessageDialog(){
       this.mensajeDialog = false;
       this.confirmaEliminacionDialog = false;
     },
     async eliminarClasifDefinit(value){
       await axios
-        .delete(this.URLRegistros+value.IdBoleta)
-        .then(async(res)=>{
+      this.formulario.deleteClasificadorDefinitivamente(value.IdBoleta)
+        .then(async(data)=>{
           this.listaBoletaFormulario.splice(this.id, 1);
           await this.actualizar.obtenerRegistros();
           const modifImporte ={
             IdRegistro: this.title.registro.IdRegistro,
             ImporteTotalBoleta: this.ImporteTotalBoleta
           }
-          await axios
-          .put(this.URLRegistros+'importetotal',modifImporte)
+          this.formulario.modificarImporteTotal(modifImporte)
           .then(async(resp)=>{
             await this.actualizar.obtenerRegistros();
-            this.message = res.data+resp.data;
+            this.message = data+resp;
             this.mensajeDialog = true;
           })
           .catch(error=>{
@@ -581,84 +709,46 @@ export default {
     cambioCodigoClasificador(event, clasificador) {
       if (event.value.CodClasificadorArea) {
         clasificador.Descripcion = event.value.Descripcion;
-        this.IdParametro = clasificador.Codigo.IdParametro;
+        this.IdParametro = clasificador.Codigo.IdParametro;this.formulario
       }
     },
     obtenerSubtiposIP() {
-      const axiosInstance = axios.create({
-        headers: {
-          "Access-Control-Allow-Origin": "*"
-        }
-      });
-      axiosInstance
-        .get(this.URLSubtiposIP)
-        .then((res) => {
-          this.SubtipoIP = res.data;
-        })
+      this.formulario.getSubtiposIngresosPropios()
+      .then(data=> {
+        this.SubtipoIP = data;
+      })
     },
     obtenerSubtiposFR() {
-      const axiosInstance = axios.create({
-        headers: {
-          "Access-Control-Allow-Origin": "*"
-        }
-      });
-      axiosInstance
-        .get(this.URLSubtiposFR)
-        .then((res) => {
-          this.SubtipoFR = res.data;
-        })
+      this.formulario.getSubtiposFondoRotatorio()
+      .then(data => {
+        this.SubtipoFR = data;
+      })
     },
     obtenerClasificadores() {
-      const axiosInstance = axios.create({
-        headers: {
-          "Access-Control-Allow-Origin": "*"
-        }
-      });
-      axiosInstance
-        .get(this.URLClasificadores)
-        .then((res) => {
-          this.ListaClasificadores = res.data;
-          // this.DescripcionClasificador = this.ListaClasificadores.map(element => {
-          //   let DescripcionC = {
-          //     value: element,
-          //     label: element.Descripcion,
-          //   }
-          //   return DescripcionC
-          // });
-          // console.log(this.DescripcionClasificador)
-        })
+      this.formulario.getClasificadores()
+      .then(data => {
+        this.ListaClasificadores = data;
+      })
     },
     async obtenerCorrelativo(value,anioFecha) {
-      const axiosInstance = axios.create({
-        headers: {
-          "Access-Control-Allow-Origin": "*"
-        }
-      });
       const valor = {
         IdParametro: value,
         Ano: anioFecha
       }
-      await axiosInstance
-        .post(this.URLCorrelativo,valor)
-        .then((res) => {
-          this.Correlativo = res.data;
-          this.NroRecibo = this.Correlativo
-        })
-        .catch(error => {
-          console.log(error)
-        })
+      this.formulario.obtenerCorrelativo(valor)
+      .then(data => {
+        this.Correlativo = data;
+        this.NroRecibo = this.Correlativo
+      })
+      .catch(error => {
+        console.log(error)
+      })
     },
     async obtenerRegistros() {
-      const axiosInstance = axios.create({
-        headers: {
-          "Access-Control-Allow-Origin": "*"
-        }
-      });
-      await axiosInstance
-        .get(this.URLRegistros)
-        .then((res) => {
-          this.ListaRegistros = res.data;
-        })
+      this.formulario.getListaRegistros()
+      .then(data => {
+        this.ListaRegistros = data;
+      })
     },
     async GuardarRegistro() {
       this.enviar = true;
@@ -719,47 +809,42 @@ export default {
             }
           }
           if(!this.dialogIncompleto){
-              const NroReciboAnterior = this.NroRecibo
-          await this.obtenerCorrelativo(1,anioFecha)
-          if(NroReciboAnterior!=this.NroRecibo){
-            alert("El N° de recibo "+NroReciboAnterior+" ya existe, se cambio por el N° "+this.NroRecibo)
-          }
-          const registro = {
-            IdParametroTipo: this.ValueTipo.IdParametro,
-            IdParametroSubtipo: this.ValueSubtipo.IdParametro,
-            NroRecibo: this.NroRecibo,
-            Fecha: this.Fecha,
-            ImporteTotalBoleta: this.ImporteTotalBoleta,
-            Igv: this.Igv,
-            MontoIgv: this.MontoIgv,
-            NombreEmpresa: this.NombreEmpresa,
-            NotaInformativa: this.NotaInformativa,
-            NombreFactura: this.NombreFactura,
-            FechaGlosa: this.FechaGlosa,
-            ImporteDeposito: this.ImporteDeposito,
-            ImporteTotalTipoIP: this.ImporteTotalTipoIP,
-            ImporteTotalTipoFR: this.ImporteTotalTipoFR,
-            NroVoucher: this.NroVoucher,
-            MontoVoucher: this.MontoVoucher,
-            NroCheque: this.NroCheque,
-            MontoCheque: this.MontoCheque,
-            NroNotaAbono: this.NroNotaAbono,
-            MontoNotaAbono: this.MontoNotaAbono,
-            NombreBanco: this.NombreBanco,
-            TextoGlosa: this.TextoGlosa,
-            UsuarioCreacion: this.UsuarioCreacion,
-            FechaCreacion: this.FechaCreacion,
-            UsuarioModificacion: this.UsuarioModificacion,
-            FechaModificacion: this.FechaModificacion,
-            listBoletas: this.listaBoletaJson,
-          };
-          const axiosInstance = axios.create({
-            headers: {
-              "Access-Control-Allow-Origin": "*"
+            const NroReciboAnterior = this.NroRecibo
+            await this.obtenerCorrelativo(1,anioFecha)
+            if(NroReciboAnterior!=this.NroRecibo){
+              alert("El N° de recibo "+NroReciboAnterior+" ya existe, se cambio por el N° "+this.NroRecibo)
             }
-          });
-          await axiosInstance
-            .post(this.URLRegistros, registro)
+            const registro = {
+              IdParametroTipo: this.ValueTipo.IdParametro,
+              IdParametroSubtipo: this.ValueSubtipo.IdParametro,
+              NroRecibo: this.NroRecibo,
+              Fecha: this.Fecha,
+              ImporteTotalBoleta: this.ImporteTotalBoleta,
+              Igv: this.Igv,
+              MontoIgv: this.MontoIgv,
+              NombreEmpresa: this.NombreEmpresa,
+              NotaInformativa: this.NotaInformativa,
+              NombreFactura: this.NombreFactura,
+              FechaGlosa: this.FechaGlosa,
+              ImporteDeposito: this.ImporteDeposito,
+              ImporteTotalTipoIP: this.ImporteTotalTipoIP,
+              ImporteTotalTipoFR: this.ImporteTotalTipoFR,
+              NroVoucher: this.NroVoucher,
+              MontoVoucher: this.MontoVoucher,
+              NroCheque: this.NroCheque,
+              MontoCheque: this.MontoCheque,
+              NroNotaAbono: this.NroNotaAbono,
+              MontoNotaAbono: this.MontoNotaAbono,
+              NombreBanco: this.NombreBanco,
+              TextoGlosa: this.TextoGlosa,
+              UsuarioCreacion: this.UsuarioCreacion,
+              FechaCreacion: this.FechaCreacion,
+              UsuarioModificacion: this.UsuarioModificacion,
+              FechaModificacion: this.FechaModificacion,
+              listBoletas: this.listaBoletaJson,
+            };
+
+            this.formulario.guardarRegistro(registro)
             .then(async() => {
               this.ingresoDialog = true;
               await this.actualizar.obtenerRegistros();
@@ -767,15 +852,11 @@ export default {
                 IdParametro: 1,
                 Ano: anioFecha
               }
-              axios.put(this.URLCorrelativoPut, valor)
-                .then(() => {
-                })
-                .catch(error => {
-                  console.log(error.response.data);
-                })
+              this.formulario.modificarCorrelativo(valor)
             })
             .catch(err => {
-              console.error(err);
+              this.message = err;
+              this.mensajeErrorDialog = true;
             })
           }
         }
@@ -819,65 +900,52 @@ export default {
           }
           if(!this.dialogIncompleto){
               const NReciboAnterior = this.NroRecibo
-          await this.obtenerCorrelativo(2,anioFecha)
-          if(NReciboAnterior!=this.NroRecibo){
-            alert("El N° de recibo "+NReciboAnterior+" ya existe, se cambio por el N° "+this.NroRecibo)
-          }
-          const registro = {
-            IdParametroTipo: this.ValueTipo.IdParametro,
-            IdParametroSubtipo: this.ValueSubtipo.IdParametro,
-            NroRecibo: this.NroRecibo,
-            Fecha: this.Fecha,
-            ImporteTotalBoleta: this.ImporteTotalBoleta,
-            Igv: this.Igv,
-            MontoIgv: this.MontoIgv,
-            NombreEmpresa: this.NombreEmpresa,
-            NotaInformativa: this.NotaInformativa,
-            NombreFactura: this.NombreFactura,
-            FechaGlosa: this.FechaGlosa,
-            ImporteDeposito: this.ImporteDeposito,
-            ImporteTotalTipoIP: this.ImporteTotalTipoIP,
-            ImporteTotalTipoFR: this.ImporteTotalTipoFR,
-            NroVoucher: this.NroVoucher,
-            MontoVoucher: this.MontoVoucher,
-            NroCheque: this.NroCheque,
-            MontoCheque: this.MontoCheque,
-            NroNotaAbono: this.NroNotaAbono,
-            MontoNotaAbono: this.MontoNotaAbono,
-            NombreBanco: this.NombreBanco,
-            TextoGlosa: this.TextoGlosa,
-            UsuarioCreacion: this.UsuarioCreacion,
-            FechaCreacion: this.FechaCreacion,
-            UsuarioModificacion: this.UsuarioModificacion,
-            FechaModificacion: this.FechaModificacion,
-            listBoletas: this.listaBoletaJson,
-          };
-          const axiosInstance = axios.create({
-            headers: {
-              "Access-Control-Allow-Origin": "*"
+            await this.obtenerCorrelativo(2,anioFecha)
+            if(NReciboAnterior!=this.NroRecibo){
+              alert("El N° de recibo "+NReciboAnterior+" ya existe, se cambio por el N° "+this.NroRecibo)
             }
-          });
-          await axiosInstance
-            .post(this.URLRegistros, registro)
+            const registro = {
+              IdParametroTipo: this.ValueTipo.IdParametro,
+              IdParametroSubtipo: this.ValueSubtipo.IdParametro,
+              NroRecibo: this.NroRecibo,
+              Fecha: this.Fecha,
+              ImporteTotalBoleta: this.ImporteTotalBoleta,
+              Igv: this.Igv,
+              MontoIgv: this.MontoIgv,
+              NombreEmpresa: this.NombreEmpresa,
+              NotaInformativa: this.NotaInformativa,
+              NombreFactura: this.NombreFactura,
+              FechaGlosa: this.FechaGlosa,
+              ImporteDeposito: this.ImporteDeposito,
+              ImporteTotalTipoIP: this.ImporteTotalTipoIP,
+              ImporteTotalTipoFR: this.ImporteTotalTipoFR,
+              NroVoucher: this.NroVoucher,
+              MontoVoucher: this.MontoVoucher,
+              NroCheque: this.NroCheque,
+              MontoCheque: this.MontoCheque,
+              NroNotaAbono: this.NroNotaAbono,
+              MontoNotaAbono: this.MontoNotaAbono,
+              NombreBanco: this.NombreBanco,
+              TextoGlosa: this.TextoGlosa,
+              UsuarioCreacion: this.UsuarioCreacion,
+              FechaCreacion: this.FechaCreacion,
+              UsuarioModificacion: this.UsuarioModificacion,
+              FechaModificacion: this.FechaModificacion,
+              listBoletas: this.listaBoletaJson,
+            };
+            this.formulario.guardarRegistro(registro)
             .then(() => {
               this.ingresoDialog = true;
               this.actualizar.obtenerRegistros();
-                const valor = {
-                  IdParametro: 2,
-                  Ano: anioFecha
-                }
-                axios.put(this.URLCorrelativoPut, valor)
-                  .then(() => {
-                  })
-                  .catch(error => {
-                    console.log(error);
-                  })
-              })
-              .catch(err => {
-                console.error(err);
-              })
+              const valor = {
+                IdParametro: 2,
+                Ano: anioFecha
+              }
+              this.formulario.modificarCorrelativo(valor)
+            })
             .catch(err => {
-              console.error(err);
+              this.message = err;
+              this.mensajeErrorDialog=true;
             })
           }
         }
@@ -1056,23 +1124,15 @@ export default {
         listBoletas: this.listaOpcional2
       }
 
-      const axiosInstance = axios.create({
-        headers: {
-          "Access-Control-Allow-Origin": "*"
-        }
-      });
-      await axiosInstance
-        .put(this.URLRegistros, registro)
-        .then(() => {
-          // this.message= res.data;
-          // this.mensajeDialog = true,
-          this.actualizar.obtenerRegistros();
-          this.editarDialog = true
-        })
-        .catch((error) => {
-          this.message= error + ". Ha ocurrido un error, actualice la pág por favor.";
-          this.mensajeDialog = true;
-        })
+      this.formulario.editarRegistroIngresos(registro)
+      .then(() => {
+        this.actualizar.obtenerRegistros();
+        this.editarDialog = true
+      })
+      .catch(error => {
+        this.message= error + ". Ha ocurrido un error, actualice la pág por favor.";
+        this.mensajeDialog = true;
+      })
     },
     editarNroRecibo() {
       this.disabled = !this.disabled;
@@ -3781,6 +3841,9 @@ export default {
     },
   },
   created: function () {
+    this.login = new Login();
+    this.supervisor = new Supervisor();
+    this.formulario = new Formulario();
     this.obtenerClasificadores();
     this.obtenerRegistros();
     this.TipoRegistro=[this.valorTipo.valorTipo]
@@ -3883,8 +3946,13 @@ export default {
         this.MontoIgv = this.title.registro.MontoIgv,
         this.NombreEmpresa = this.title.registro.NombreEmpresa,
         this.NotaInformativa = this.title.registro.NotaInformativa,
-        this.NombreFactura = this.title.registro.NombreFactura,
-        this.FechaGlosa = new Date(this.title.registro.FechaGlosa),
+        this.NombreFactura = this.title.registro.NombreFactura;
+        if(this.title.registro.FechaGlosa){
+          this.FechaGlosa = new Date(this.title.registro.FechaGlosa)
+        }
+        else{
+          this.FechaGlosa = this.title.registro.FechaGlosa
+        }
         this.ImporteDeposito = this.title.registro.ImporteDeposito,
         this.ImporteTotalTipoIP = this.title.registro.ImporteTotalTipoIP,
         this.ImporteTotalTipoFR = this.title.registro.ImporteTotalTipoFR,

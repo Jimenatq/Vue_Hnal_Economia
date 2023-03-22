@@ -108,7 +108,7 @@
 					</div>
 					<template #footer>
 						<Button label="Cancelar" icon="pi pi-times" class="p-button-rounded p-button-secondary" @click="anularRegistroDialog = false"/>
-						<Button label="Anular" icon="pi pi-check" class="p-button-rounded p-button-danger" @click="anularRegistro(registro)" />
+						<Button label="Anular" icon="pi pi-check" class="p-button-rounded p-button-danger" @click="esSupervisorGlobal(registro)" />
 					</template>
 				</Dialog>
         <Dialog v-model:visible="activarRegistroDialog" :style="{width: '450px'}" header="Confirmar" :modal="true">
@@ -118,7 +118,7 @@
 					</div>
 					<template #footer>
 						<Button label="Cancelar" icon="pi pi-times" class="p-button-rounded p-button-secondary" @click="activarRegistroDialog = false"/>
-						<Button label="Activar" icon="pi pi-check" class="p-button-rounded p-button-success" @click="anularRegistro(registro)" />
+						<Button label="Activar" icon="pi pi-check" class="p-button-rounded p-button-success" @click="esSupervisorGlobal(registro)" />
 					</template>
 				</Dialog>
 				<Dialog v-model:visible="eliminarRegistroDialog" :style="{width: '450px'}" header="Confirmar" :modal="true">
@@ -146,6 +146,33 @@
 						<Button label="Generar Reporte" icon="pi pi-check" class="p-button-rounded p-button-help" @click="generarReporte()" />
 					</template>
 				</Dialog>
+        <Dialog v-model:visible="supervisorDialog" :style="{width: '450px'}" header="Ingrese Supervisor" :modal="true">
+					<div class="align-items-center justify-content-center" :style="{padding: '0 40px'}">
+						<p>Ingrese el usuario Supervisor:</p>
+            <InputText v-model="usuario" type="text" class="w-full mb-3" placeholder="Ingrese el usuario" 
+            :class="{ 'p-invalid': ingresoCredenciales && !usuario}"></InputText>
+            <br />
+            <p>Ingrese la clave:</p>
+						<Password id="password1" v-model="clave" placeholder="Ingrese su clave" :toggleMask="true" :feedback="false" class="w-full mb-3" inputClass="w-full"
+              :class="{ 'p-invalid': ingresoCredenciales && !clave}"></Password>
+					</div>
+          <span v-if="cargandoSupervisor" class="flex justify-content-center mb-4"><i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i></span>
+					<template #footer>
+						<Button label="Cancelar" icon="pi pi-times" class="p-button-rounded p-button-secondary" @click="supervisorDialog = false"/>
+						<Button label="Aceptar" icon="pi pi-check" class="p-button-rounded p-button-success" @click="verificarSupervisor()" />
+					</template>
+				</Dialog>
+        <Dialog v-model:visible="motivoDialog" :style="{width: '450px'}" header="Motivo" :modal="true">
+					<div class="align-items-center justify-content-center" :style="{padding: '0 40px'}">
+						<p>Ingrese el motivo:</p>
+            <Textarea v-model="motivo" placeholder="Ingrese el motivo" :autoResize="true" class="w-full"
+                rows="2" cols="30" />
+            <br />
+          </div>
+					<template #footer>
+						<Button label="Aceptar" icon="pi pi-check" class="p-button-rounded p-button-success" @click="verificarMotivo(motivo)" />
+					</template>
+				</Dialog>
         <Dialog v-model:visible="mensajeErrorDialog" :style="{width: '450px'}" header="Mensaje" :modal="true" :closable="false">
 					<div class="align-items-center justify-content-center" :style="{padding: '0 40px'}">
             <p><i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
@@ -169,11 +196,15 @@ import pdfFonts from "pdfmake/build/vfs_fonts";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 import IngresosPropios from "../service/IngresosPropios.js";
 import exportFromJSON from "export-from-json";
+import Supervisor from '../service/Supervisor';
+import Login from "../service/Login.js";
 
 export default {
 	data() {
 		return {
 			ListaRegistros: [],
+      listaRoles: [],
+      listaDescripcionRoles: [],
 			filtros: null,
 			cargando: true,
 			editarRegistroDialog: false,
@@ -245,13 +276,152 @@ export default {
       listaPorAnio: new Date().getFullYear(),
       mensajeErrorDialog: false,
       message: null,
+      supervisorDialog: false,
+      usuario: null,
+      clave: null,
+      motivoDialog: null,
+      cargandoSupervisor: false,
+      ingresoCredenciales: false
 		}
 	},
+  supervisor: null,
   ingresosPropios: null,
+  login: null,
 	components:{
 		"registro": registro, 
 	},
 	methods: {
+    abrirDirectoDialogSupervisor(registro){
+      this.motivoDialog=true;
+      this.registro = registro;
+      this.usuario = this.$store.state.userName;
+      this.anularRegistroDialog = false;
+      this.activarRegistroDialog = false;
+      this.motivo = null;
+    },
+    //si inicia sesion con usuario supervisor no pedira credenciales para nada
+    esSupervisorGlobal(registro){
+      const username = {
+        Usuario: this.$store.state.userName
+      }
+      this.supervisor.getListaRolesPorUsuario(username)
+      .then(data=>{
+        let listaRolesUser = data;
+        if(listaRolesUser.length!=0){
+          let listaDescripcionRol = [];
+          listaRolesUser.map((element)=>{
+            listaDescripcionRol.push(element.Descripcion);
+          })
+          let existeRolSupervisor = listaDescripcionRol.includes('Supervisor');
+          if(existeRolSupervisor){
+            this.abrirDirectoDialogSupervisor(registro);
+          }
+          else{
+            this.abrirDialogSupervisor(registro);
+          }
+        }
+      })
+      .catch(error=>{
+        this.message = error;
+        this.mensajeErrorDialog = true;
+      })
+    },
+    verificarMotivo(motivo){
+      if(motivo.length>20){
+        this.anularRegistro(this.registro,motivo)
+      }
+      else{
+        this.message = "El motivo debe tener más de 20 caracteres";
+        this.mensajeErrorDialog = true;
+      }
+    },
+    esSupervisor(user){
+      const username = {
+          Usuario: user
+        }
+        this.supervisor.getListaRolesPorUsuario(username)
+        .then(data=>{
+          let listaRolesUser = data;
+          if(listaRolesUser.length==0){
+            this.message = "El usuario no tiene roles asignados";
+            this.mensajeErrorDialog = true;
+          }
+          else{
+            let listaDescripcionRol = [];
+            listaRolesUser.map((element)=>{
+              listaDescripcionRol.push(element.Descripcion);
+            })
+            let existeRolSupervisor = listaDescripcionRol.includes('Supervisor');
+            if(existeRolSupervisor){
+                this.motivoDialog=true;
+            }
+            else{
+              this.message = "El usuario no es supervisor, intente de nuevo con un usuario supervisor.";
+              this.mensajeErrorDialog = true;
+            }
+          }
+        })
+    },
+    abrirDialogSupervisor(registro){
+      this.supervisorDialog = true;
+      this.registro = registro;
+      this.anularRegistroDialog = false;
+      this.activarRegistroDialog = false;
+      this.usuario = null;
+      this.clave = null;
+      this.motivo = null;
+      this.cargandoSupervisor = false;
+      this.ingresoCredenciales = false;
+    },
+    verificarSupervisor(){
+      this.cargandoSupervisor = true;
+      this.ingresoCredenciales = true;
+      const user = {
+        Usuario: this.usuario,
+        Clave: this.clave
+      }
+      this.login.validarUsuario(user)
+        .then(data => {
+          this.cargandoSupervisor = false;
+          if(data.error){
+            this.message = data.error;
+            this.mensajeErrorDialog = true;
+          }
+          else{
+            //validamos si es supervisor
+            this.esSupervisor(this.usuario);
+          }
+        })
+        .catch(err => {
+          this.cargandoSupervisor = false;
+          this.message = err + ". Ha ocurrido un error, actualice la pág por favor.";
+          this.mensajeErrorDialog = true;
+        })
+    },
+    validarRoles(){
+      if(this.$store.state.isAuthenticated){
+        const username = {
+          Usuario: this.$store.state.userName
+        }
+        this.supervisor.getListaRolesPorUsuario(username)
+        .then(data=>{
+          this.listaRoles = data;
+          if(this.listaRoles.length==0){
+            this.$router.push({ path: '/access' })
+          }
+          else{
+            this.listaRoles.map((element)=>{
+              this.listaDescripcionRoles.push(element.Descripcion);
+            })
+            let existeRolIngresosPropios = this.listaDescripcionRoles.includes('Ingresos Propios');
+            let existeRolSupervisor = this.listaDescripcionRoles.includes('Supervisor');
+            if(!(existeRolIngresosPropios || existeRolSupervisor)){
+              this.$router.push({ path: '/access' })
+            }
+          }
+        })
+      }
+    },
     noLogin(){
       if(!this.$store.state.isAuthenticated){this.$router.push({ path: '/login' })}
     },
@@ -3385,43 +3555,52 @@ export default {
         alert("Ingrese un año por favor")
       }
 		},
-		// async editarRegistro(registro){
-		// 	console.log(registro)
-		// 	await axios
-		// 	.put(this.URLRegistros,registro)
-		// 	.then((res) => {
-		// 		console.log(res)
-		// 	})
-		// 	.catch((error)=>{
-		// 		console.log(error.response.data)
-		// 	})
-		// },
-		async anularRegistro(registro){
+		anularRegistro(registro, motivo){
 			this.cargando = true;
-      const datos = {
-        IdRegistro: registro.IdRegistro,
-        Anulado: !registro.Anulado
-      }
-      this.ingresosPropios.putAnularRegistros(datos)
-			.then(() => {
-				this.anularRegistroDialog= false;
-        this.activarRegistroDialog= false;
-				this.obtenerRegistros();
-				this.cargando = false;
-        if(!registro.Anulado){
+      if(!registro.Anulado){
+        let datos = {
+          IdRegistro: registro.IdRegistro,
+          UsuarioAnulacion: this.usuario,
+          MotivoAnulacion: motivo,
+          FechaAnulacion: new Date(),
+          Anulado: !registro.Anulado
+        }
+        this.ingresosPropios.putAnularRegistros(datos)
+        .then(() => {
+          this.cargando = false;
+          this.motivoDialog = false;
+          this.supervisorDialog = false;
+          this.obtenerRegistros();
           this.$toast.add({severity:'error', summary: 'Registro Anulado', detail: 'El registro N° '+registro.NroRecibo+' ha sido anulado.', life: 3000});
+        })
+        .catch(err=>{
+          this.cargando = false;
+          this.message = err + ". Ha ocurrido un error, actualice la pág por favor.";
+          this.mensajeErrorDialog=true;
+        })
+      }
+      else{
+        let datos = {
+          IdRegistro: registro.IdRegistro,
+          UsuarioActivacion: this.usuario,
+          MotivoActivacion: motivo,
+          FechaActivacion: new Date(),
+          Anulado: !registro.Anulado
         }
-        else{
+        this.ingresosPropios.putAnularRegistros(datos)
+        .then(() => {
+          this.cargando = false;
+          this.motivoDialog = false;
+          this.supervisorDialog = false;
+          this.obtenerRegistros();
           this.$toast.add({severity:'success', summary: 'Registro Activo', detail: 'El registro N° '+registro.NroRecibo+' ha sido activado.', life: 3000});
-        }
-			})
-			.catch(err=>{
-				this.cargando = false;
-				this.anularRegistroDialog= false;
-        this.activarRegistroDialog= false;
-        this.message = err;
-        this.mensajeErrorDialog= true;
-			})
+        })
+        .catch(err=>{
+          this.cargando = false;
+          this.message = err + ". Ha ocurrido un error, actualice la pág por favor.";
+          this.mensajeErrorDialog=true;
+        })
+      }
 		},
 		modalEditar(registro){
 			this.registro = registro;
@@ -3478,13 +3657,13 @@ export default {
 	},
 	created(){
     this.noLogin();
+    this.supervisor = new Supervisor();
+    this.validarRoles();
     this.ingresosPropios = new IngresosPropios();
+    this.login = new Login();
 		this.obtenerRegistros();
 		this.tiposFiltros();
-	},
-  mounted(){
-    
-  }
+	}
 }
 </script>
 

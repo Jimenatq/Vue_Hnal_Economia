@@ -84,7 +84,7 @@ export default {
                     //    {label: 'PrimeIcons', icon: 'pi pi-fw pi-prime', to: '/icons'},
                 //         {label: 'PrimeFlex', icon: 'pi pi-fw pi-desktop', url: 'https://www.primefaces.org/primeflex/', target: '_blank'},
                 // {label: 'Login', icon: 'pi pi-fw pi-sign-in', to: '/login'},
-                         {label: 'Access Denied', icon: 'pi pi-fw pi-lock', to: '/access'},
+                        //  {label: 'Access Denied', icon: 'pi pi-fw pi-lock', to: '/access'},
                     ]
                 },
 				// {

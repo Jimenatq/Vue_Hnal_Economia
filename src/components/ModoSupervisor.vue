@@ -6,6 +6,9 @@
 				<div class="field col-12 grid">
 					<h2 class="m-auto">Modo Supervisor</h2>
 				</div>
+        <div class="field col-12 grid">
+					<h4>Tabla Correlativo</h4>
+				</div>
         <Toolbar class="mb-4">
           <template v-slot:start>
             <div class="my-2">
@@ -13,8 +16,8 @@
 						</div>
 					</template>
 				</Toolbar>
-				<DataTable :value="listaCorrelativo" :paginator="false" class="col-8 m-auto p-datatable-gridlines" dataKey="IdCorrelativo" :rowHover="true" 
-						:loading="cargando" responsiveLayout="scroll" >
+				<DataTable :value="listaCorrelativo" :paginator="true" class="col-8 m-auto p-datatable-gridlines" dataKey="IdCorrelativo" :rowHover="true" 
+						:loading="cargando" responsiveLayout="scroll" :rows="5" >
 					<template #empty>
             No hay datos para mostrar.
           </template>
@@ -35,7 +38,7 @@
 							</span>
 						</template>
 					</Column>
-					<Column header="N° docs" style="min-width:3rem">
+					<Column header="N° correlativo" style="min-width:3rem">
 						<template #body="{data}">
 							<span style="margin-left: .5em; vertical-align: middle">
 								{{ data.NroCorrelativo }}
@@ -48,7 +51,10 @@
 						</template>
 					</Column>
 				</DataTable>
-        <DataTable :value="listaUsuarios" :paginator="false" class="col-8 m-auto p-datatable-gridlines" dataKey="IdUsuario" :rowHover="true" 
+        <div class="field col-12 grid mt-4">
+					<h4>Tabla Usuarios</h4>
+				</div>
+        <DataTable :value="listaUsuarios" :paginator="true" class="col-8 m-auto p-datatable-gridlines" dataKey="IdUsuario" :rowHover="true" :rows="10"  
 						:loading="cargando" responsiveLayout="scroll" >
 					<template #empty>
             No hay usuarios para mostrar.
@@ -107,31 +113,36 @@
 				</Dialog>
         <Dialog v-model:visible="editarUsuarioDialog" :style="{width: '450px'}" header="Editar Usuario" :modal="true">
 					<div class="align-items-center justify-content-center" :style="{padding: '0 40px'}">
-						Usuario:  {{usuario.Usuario}}
+						<div class="flex">
+              <h5 class="mr-7">Usuario:</h5>  {{usuario.Usuario}}
+            </div>
+              <h5 class="mt-0">Nombres Completos:</h5>  
+              <p class="text-center m-0">{{usuario.NombresCompletos}}</p>
             <br/>
-            <br/>
-            Nombres Completos: {{usuario.NombresCompletos}}
-            <br/>
-            <br/>
+            <h5 class="mt-0">Agregar un rol:</h5> 
             <AutoComplete placeholder="Ingrese un rol" id="dd" :dropdown="true" :multiple="false"
               v-model="descripcion" :suggestions="autoFilteredValue"
               @change="asignarValorRol($event,usuario)"
               @complete="buscarRoles($event)" field="Descripcion" />
-            <Button id="button-agregar" v-tooltip="'Agregar Rol'" icon="pi pi-plus" class="p-button-help mr-2 mb-2 mt-1-8"
+            <Button id="button-agregar" v-tooltip="'Agregar Rol'" icon="pi pi-plus" class="p-button-success ml-4"
               @click="agregarRol()" />
-              <div class="field col-12 grid" :key="i + 'neo'" v-for="(userRol, i) of listaRolesUsuario">
-                <div class="field col-12 md:col-9 m-0">
-                  {{ userRol.Descripcion }}
-                </div>
-                <div class="field col-12 md:col-3 m-0">
-                  <Button icon="pi pi-times" v-tooltip="'Eliminar rol'" class="p-button-danger mr-2" @click="eliminarRol(userRol.IdUsuarioRol)" />
+              <h5>Roles:</h5>
+              <div v-if="listaRolesUsuario.length!=0" >
+                <div class="field col-12 grid m-0" :key="i + 'neo'" v-for="(userRol, i) of listaRolesUsuario">
+                  <div class="field col-12 md:col-9 m-0 flex justify-content-center align-items-center">
+                    {{ userRol.Descripcion }}
+                  </div>
+                  <div class="field col-12 md:col-3 m-0">
+                    <Button icon="pi pi-times" v-tooltip="'Eliminar rol'" class="p-button-danger mr-2" @click="eliminarRol(userRol.IdUsuarioRol)" />
+                  </div>
                 </div>
               </div>
-            <br />
+              <div v-else>
+                <h6 class="text-center">El usuario no tiene roles asignados</h6>
+              </div>
 					</div>
 					<template #footer>
-						<Button label="Cancelar" icon="pi pi-times" class="p-button-rounded p-button-secondary" @click="editarUsuarioDialog = false"/>
-						<Button label="Modificar Usuario" icon="pi pi-check" class="p-button-rounded p-button-help" @click="modificarUsuario()" />
+						<Button label="Aceptar" class="p-button-rounded p-button-success" @click="editarUsuarioDialog = false"/>
 					</template>
 				</Dialog>
         <Dialog v-model:visible="mensajeDialog" :style="{width: '450px'}" header="Mensaje" :modal="true" :closable="false">
@@ -166,6 +177,7 @@ export default {
       listaCorrelativo: [],
       listaUsuarios: [],
       listaRoles: [],
+      listaDescripcionRoles: [],
       listaRolesUsuario: [],
       autoFilteredValue: [],
       correlativo: null,
@@ -204,6 +216,31 @@ export default {
     },
   },
 	methods: {
+    validarRoles(){
+      console.log(this.$store.state.userName)
+      if(this.$store.state.isAuthenticated){
+        const username = {
+          Usuario: this.$store.state.userName
+        }
+        this.supervisor.getListaRolesPorUsuario(username)
+        .then(data=>{
+          this.listaRoles = data;
+          console.log(data)
+          if(this.listaRoles.length==0){
+            this.$router.push({ path: '/access' })
+          }
+          else{
+            this.listaRoles.map((element)=>{
+              this.listaDescripcionRoles.push(element.Descripcion);
+            })
+            let existeRolSupervisor = this.listaDescripcionRoles.includes('Supervisor');
+            if(!existeRolSupervisor){
+              this.$router.push({ path: '/access' })
+            }
+          }
+        })
+      }
+    },
     noLogin(){
       if(!this.isAuthenticated){this.$router.push({ path: '/login' })}
     },
@@ -404,6 +441,7 @@ export default {
     created: function(){
       this.noLogin();
       this.supervisor = new Supervisor();
+      this.validarRoles();
       this.obtenerTablaCorrelativo();
       this.obtenerListaUsuarios();
       this.obtenerListaRoles();

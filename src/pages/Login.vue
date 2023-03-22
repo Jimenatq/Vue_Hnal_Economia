@@ -89,8 +89,6 @@ export default {
             this.mensajeErrorDialog = true;
           }
           else{
-            console.log("Credenciales correctas")
-            // this.login.guardarToken(data);
             axios.defaults.headers.common['Authorization'] = 'Bearer '+ data.token;
             localStorage.setItem('token', data.token);
             this.$store.commit('setAuthenticated',true);

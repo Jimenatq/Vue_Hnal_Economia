@@ -221,3 +221,6 @@ var token = localStorage.getItem('token');
 if(token){
   axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
 }
+
+// axios.defaults.baseURL = 'http://localhost:49146/api/'
+axios.defaults.baseURL = 'http://192.168.36.121:8081/api/'
