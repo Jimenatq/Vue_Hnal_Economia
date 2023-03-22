@@ -307,8 +307,15 @@ export default {
             this.listaRoles.forEach(element => {
               if(element.Descripcion != 'Fondo Rotatorio'){
                 this.$router.push({ path: '/access' })
+				console.log('llego hasta ahi');
               }
             })
+			/*for (let i = 0; i < this.listaRoles.length; i++) {
+				if(this.listaRoles[i].Descripcion !='Fondo Rotatorio'){
+					this.$router.push({ path: '/access' })
+					break;
+				}
+			}*/
           }
         })
       }
