@@ -327,7 +327,7 @@ export default {
       })
     },
     verificarMotivo(motivo){
-      if(motivo.length>15&&motivo.length<21){
+      if(motivo.length>14&&motivo.length<21){
         this.anularRegistro(this.registro,motivo)
       }
       else{
@@ -462,11 +462,13 @@ export default {
           if(!element.Anulado){
             sumaImporteTotal += parseFloat(element.ImporteTotalBoleta)
             listAnulado.push(' ')
+            listMotivo.push(' ')
+            listUsuario.push(' ')
           }
           else{
             listAnulado.push('Anulado')
-            listMotivo.push(element.MotivoAnulacion.slice(0,25))
-            listUsuario.push(element.UsuarioAnulacion.slice(0,15))
+            listMotivo.push(element.MotivoAnulacion.slice(0,20))
+            listUsuario.push(element.UsuarioAnulacion.slice(0,10))
           }
       })
       const listCod = [];
@@ -562,7 +564,7 @@ export default {
             { text: "\n" },
             {
               table: {
-                widths: [37,70,"*",31,95,77,55,145,85],
+                widths: [37,70,"*",31,95,77,53,160,80],
                 body: [
                   [
                     {
@@ -712,7 +714,7 @@ export default {
             { text: "\n" },
             {
               table: {
-                widths: [37,70,"*",31,95,77,55,145,85],
+                widths: [37,70,"*",31,95,77,55,160,80],
                 body: [
                   [
                     {

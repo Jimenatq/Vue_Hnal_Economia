@@ -325,11 +325,11 @@ export default {
       })
     },
     verificarMotivo(motivo){
-      if(motivo.length>20){
+      if(motivo.length>14&&motivo.length<21){
         this.anularRegistro(this.registro,motivo)
       }
       else{
-        this.message = "El motivo debe tener más de 20 caracteres";
+        this.message = "El motivo debe tener más de 15 caracteres pero menos de 20";
         this.mensajeErrorDialog = true;
       }
     },
@@ -466,11 +466,13 @@ export default {
         if(!element.Anulado){
           sumaImporteTotal += parseFloat(element.ImporteTotalBoleta)
           listAnulado.push(' ');
+          listMotivo.push(' ')
+          listUsuario.push(' ')
         }
         else{
           listAnulado.push('A')
-          listMotivo.push(element.MotivoAnulacion.slice(0,25))
-          listUsuario.push(element.UsuarioAnulacion.slice(0,13))
+          listMotivo.push(element.MotivoAnulacion.slice(0,20))
+          listUsuario.push(element.UsuarioAnulacion.slice(0,10))
         }
       })
       const listCod = [];
@@ -541,7 +543,7 @@ export default {
             {
               // layout : 'headerLineOnly',
               table: {
-                widths: [37,65,"*","*","*",25,85,30,20,140,80],
+                widths: [37,65,"*","*","*",25,85,30,20,160,80],
                 body: [
                   [
                     {
@@ -709,7 +711,7 @@ export default {
             { text: "\n"},
             {
               table: {
-                widths: [37,65,"*","*","*",25,85,30,20,140,80],
+                widths: [37,65,"*","*","*",25,85,30,20,160,80],
                 body: [
                   [
                     {
