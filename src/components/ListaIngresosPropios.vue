@@ -327,11 +327,11 @@ export default {
       })
     },
     verificarMotivo(motivo){
-      if(motivo.length>20){
+      if(motivo.length>15&&motivo.length<21){
         this.anularRegistro(this.registro,motivo)
       }
       else{
-        this.message = "El motivo debe tener más de 20 caracteres";
+        this.message = "El motivo debe tener más de 15 caracteres pero menos de 20";
         this.mensajeErrorDialog = true;
       }
     },
@@ -450,6 +450,8 @@ export default {
       const listFecha = [];
       const listImporteTotalBoleta = [];
       const listAnulado = [];
+      const listMotivo = [];
+      const listUsuario = [];
       let sumaImporteTotal = 0;
       listaRegistros.map((element)=>{
         listImporteTotalBoleta.push(
@@ -463,6 +465,8 @@ export default {
           }
           else{
             listAnulado.push('Anulado')
+            listMotivo.push(element.MotivoAnulacion.slice(0,25))
+            listUsuario.push(element.UsuarioAnulacion.slice(0,15))
           }
       })
       const listCod = [];
@@ -516,10 +520,11 @@ export default {
           info: {
             title: "Reporte de Ingresos Propios",
           },
+          pageOrientation: 'landscape',
           pageMargins: [ 40,40,40,150 ],
           footer: function (currentPage, pageCount) {
             return {
-                margin: [550,100,0,0],
+                margin: [790,100,0,0],
                 text:currentPage.toString() + ' / ' + pageCount
               };
           },
@@ -557,7 +562,7 @@ export default {
             { text: "\n" },
             {
               table: {
-                widths: [37,70,"*",31,95,77,55],
+                widths: [37,70,"*",31,95,77,55,145,85],
                 body: [
                   [
                     {
@@ -587,6 +592,14 @@ export default {
                     {
                       alignment: "center",
                       text: "Estado"
+                    },
+                    {
+                      alignment: "center",
+                      text: "Motivo de anulación"
+                    },
+                    {
+                      alignment: "center",
+                      text: "Anulado por:"
                     }
                   ],
                   [
@@ -620,22 +633,30 @@ export default {
                       color: 'red',
                       type:"none",
                       ol: [listAnulado]
+                    },
+                    {
+                      type: "none",
+                      ol: [listMotivo]
+                    },
+                    {
+                      type:"none",
+                      ol: [listUsuario]
                     }
                   ],
                   [
                     {
-                      colSpan: 2,
                       alignment: "center",
                       text: "Total"
-                    },{},
-                    {
-                      alignment: "right",  
-                      text: sumaImporteTotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
                     },
                     {
-                      colSpan: 4,
+                      colSpan: 2,
+                      alignment: "right",  
+                      text: sumaImporteTotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+                    },{},
+                    {
+                      colSpan: 6,
                       text: " "
-                    },{},{},{}
+                    },{},{},{},{},{}
                   ]
                 ]
               }
@@ -649,10 +670,11 @@ export default {
           info: {
             title: "Reporte de Ingresos Propios",
           },
+          pageOrientation: 'landscape',
           pageMargins: [ 40,40,40,150 ],
           footer: function (currentPage, pageCount) {
             return {
-                margin: [550,100,0,0],
+                margin: [790,100,0,0],
                 text:currentPage.toString() + ' / ' + pageCount
               };
           },
@@ -690,7 +712,7 @@ export default {
             { text: "\n" },
             {
               table: {
-                widths: [37,70,"*",31,95,77,55],
+                widths: [37,70,"*",31,95,77,55,145,85],
                 body: [
                   [
                     {
@@ -720,6 +742,14 @@ export default {
                     {
                       alignment: "center",
                       text: "Estado"
+                    },
+                    {
+                      alignment: "center",
+                      text: "Motivo"
+                    },
+                    {
+                      alignment: "center",
+                      text: "Anulado por:"
                     }
                   ],
                   [
@@ -753,22 +783,30 @@ export default {
                       color: 'red',
                       type:"none",
                       ol: [listAnulado]
+                    },
+                    {
+                      type: "none",
+                      ol: [listMotivo]
+                    },
+                    {
+                      type:"none",
+                      ol: [listUsuario]
                     }
                   ],
                   [
-                  {
-                      colSpan: 2,
+                    {
                       alignment: "center",
                       text: "Total"
-                    },{},
-                    {
-                      alignment: "right",  
-                      text: sumaImporteTotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
                     },
                     {
-                      colSpan: 4,
+                      colSpan: 2,
+                      alignment: "right",  
+                      text: sumaImporteTotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+                    },{},
+                    {
+                      colSpan: 6,
                       text: " "
-                    },{},{},{}
+                    },{},{},{},{},{}
                   ]
                 ]
               }
@@ -856,6 +894,7 @@ export default {
           this.ingresosPropios.getReporteRegistros(valueReport)
           .then(data => {
             this.listReporte = data;
+            console.log(this.listReporte.length)
             if(this.listReporte.length==0){
               alert("No se ha encontrado registros en el tiempo solicitado")
             }
@@ -867,7 +906,14 @@ export default {
                     NroRecibo: element.NroRecibo,
                     Fecha: element.Fecha.slice(0,10),
                     ImporteTotal: element.ImporteTotalBoleta,
-                    Subtipo: "Recaudación"
+                    Subtipo: "Recaudación",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -876,7 +922,14 @@ export default {
                     NroRecibo: element.NroRecibo,
                     Fecha: element.Fecha.slice(0,10),
                     ImporteTotal: element.ImporteTotalBoleta,
-                    Subtipo: "Penalidad"
+                    Subtipo: "Penalidad",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -885,7 +938,14 @@ export default {
                     NroRecibo: element.NroRecibo,
                     Fecha: element.Fecha.slice(0,10),
                     ImporteTotal: element.ImporteTotalBoleta,
-                    Subtipo: "Factura"
+                    Subtipo: "Factura",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -894,7 +954,14 @@ export default {
                     NroRecibo: element.NroRecibo,
                     Fecha: element.Fecha.slice(0,10),
                     ImporteTotal: element.ImporteTotalBoleta,
-                    Subtipo: "Protocolo"
+                    Subtipo: "Protocolo",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -903,7 +970,14 @@ export default {
                     NroRecibo: element.NroRecibo,
                     Fecha: element.Fecha.slice(0,10),
                     ImporteTotal: element.ImporteTotalBoleta,
-                    Subtipo: "Detracción"
+                    Subtipo: "Detracción",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -912,7 +986,14 @@ export default {
                     NroRecibo: element.NroRecibo,
                     Fecha: element.Fecha.slice(0,10),
                     ImporteTotal: element.ImporteTotalBoleta,
-                    Subtipo: "Otros servicios"
+                    Subtipo: "Otros servicios",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -921,7 +1002,14 @@ export default {
                     NroRecibo: element.NroRecibo,
                     Fecha: element.Fecha.slice(0,10),
                     ImporteTotal: element.ImporteTotalBoleta,
-                    Subtipo: "Otros ingresos"
+                    Subtipo: "Otros ingresos",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -930,7 +1018,14 @@ export default {
                     NroRecibo: element.NroRecibo,
                     Fecha: element.Fecha.slice(0,10),
                     ImporteTotal: element.ImporteTotalBoleta,
-                    Subtipo: "Ingresos diversos"
+                    Subtipo: "Ingresos diversos",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -949,8 +1044,8 @@ export default {
         }
         else if(estado==2){
           this.ingresosPropios.getReporteRegistrosPorAnnio(valueReport)
-          .then((res) => {
-            this.listReporte = res.data;
+          .then(data => {
+            this.listReporte = data;
             if(this.listReporte.length==0){
               alert("No se ha encontrado registros en el año solicitado")
             }
@@ -962,7 +1057,14 @@ export default {
                     NroRecibo: element.NroRecibo,
                     Fecha: element.Fecha.slice(0,10),
                     ImporteTotal: element.ImporteTotalBoleta,
-                    Subtipo: "Recaudación"
+                    Subtipo: "Recaudación",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -971,7 +1073,14 @@ export default {
                     NroRecibo: element.NroRecibo,
                     Fecha: element.Fecha.slice(0,10),
                     ImporteTotal: element.ImporteTotalBoleta,
-                    Subtipo: "Penalidad"
+                    Subtipo: "Penalidad",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -980,7 +1089,14 @@ export default {
                     NroRecibo: element.NroRecibo,
                     Fecha: element.Fecha.slice(0,10),
                     ImporteTotal: element.ImporteTotalBoleta,
-                    Subtipo: "Factura"
+                    Subtipo: "Factura",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -989,7 +1105,14 @@ export default {
                     NroRecibo: element.NroRecibo,
                     Fecha: element.Fecha.slice(0,10),
                     ImporteTotal: element.ImporteTotalBoleta,
-                    Subtipo: "Protocolo"
+                    Subtipo: "Protocolo",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -998,7 +1121,14 @@ export default {
                     NroRecibo: element.NroRecibo,
                     Fecha: element.Fecha.slice(0,10),
                     ImporteTotal: element.ImporteTotalBoleta,
-                    Subtipo: "Detracción"
+                    Subtipo: "Detracción",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -1007,7 +1137,14 @@ export default {
                     NroRecibo: element.NroRecibo,
                     Fecha: element.Fecha.slice(0,10),
                     ImporteTotal: element.ImporteTotalBoleta,
-                    Subtipo: "Otros servicios"
+                    Subtipo: "Otros servicios",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -1016,7 +1153,14 @@ export default {
                     NroRecibo: element.NroRecibo,
                     Fecha: element.Fecha.slice(0,10),
                     ImporteTotal: element.ImporteTotalBoleta,
-                    Subtipo: "Otros ingresos"
+                    Subtipo: "Otros ingresos",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -1025,7 +1169,14 @@ export default {
                     NroRecibo: element.NroRecibo,
                     Fecha: element.Fecha.slice(0,10),
                     ImporteTotal: element.ImporteTotalBoleta,
-                    Subtipo: "Ingresos diversos"
+                    Subtipo: "Ingresos diversos",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -1039,6 +1190,7 @@ export default {
           })
           .catch(err=>{
             this.message = err;
+            console.log(err)
             this.mensajeErrorDialog=true;
           })
         }
@@ -3656,7 +3808,7 @@ export default {
 		}
 	},
 	created(){
-    this.noLogin();
+    // this.noLogin();
     this.supervisor = new Supervisor();
     this.validarRoles();
     this.ingresosPropios = new IngresosPropios();

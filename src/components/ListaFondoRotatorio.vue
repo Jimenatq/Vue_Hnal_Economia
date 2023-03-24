@@ -451,6 +451,8 @@ export default {
       const listMontoIgv = [];
       const listVenta = [];
       const listIgv = [];
+      const listMotivo = [];
+      const listUsuario = [];
       let sumaImporteTotal = 0;
       listaRegistros.map((element)=>{
         listNroRecibo.push(element.NroRecibo)
@@ -463,10 +465,12 @@ export default {
         )
         if(!element.Anulado){
           sumaImporteTotal += parseFloat(element.ImporteTotalBoleta)
-          listAnulado.push(' ')
+          listAnulado.push(' ');
         }
         else{
           listAnulado.push('A')
+          listMotivo.push(element.MotivoAnulacion.slice(0,25))
+          listUsuario.push(element.UsuarioAnulacion.slice(0,13))
         }
       })
       const listCod = [];
@@ -495,10 +499,11 @@ export default {
           info: {
             title: "Reporte de Fondo Rotatorio",
           },
+          pageOrientation: 'landscape',
           pageMargins: [ 40,40,40,150 ],
           footer: function (currentPage, pageCount) {
               return {
-                  margin: [550,100,0,0],
+                  margin: [790,100,0,0],
                   text:currentPage.toString() + ' / ' + pageCount};
           },
           defaultStyle: {
@@ -536,7 +541,7 @@ export default {
             {
               // layout : 'headerLineOnly',
               table: {
-                widths: [37,65,"*","*","*",25,85,30,20],
+                widths: [37,65,"*","*","*",25,85,30,20,140,80],
                 body: [
                   [
                     {
@@ -573,7 +578,15 @@ export default {
                     },
                     {
                       alignment: "center",
-                      text: " "
+                      text: "Est."
+                    },
+                    {
+                      alignment: "center",
+                      text: "Motivo"
+                    },
+                    {
+                      alignment: "center",
+                      text: "Anulado por:"
                     }
                   ],
                   [
@@ -618,22 +631,30 @@ export default {
                       color: 'red',
                       type:"none",
                       ol: [listAnulado]
+                    },
+                    {
+                      type: "none",
+                      ol: [listMotivo]
+                    },
+                    {
+                      type:"none",
+                      ol: [listUsuario]
                     }
                   ],
                   [
                     {
-                      colSpan: 2,
                       alignment: "center",
                       text: "Total"
-                    },{},
-                    {
-                      alignment: "right",  
-                      text: sumaImporteTotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
                     },
                     {
-                      colSpan: 6,
+                      colSpan: 2,
+                      alignment: "right",  
+                      text: sumaImporteTotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+                    },{},
+                    {
+                      colSpan: 8,
                       text: " "
-                    },{},{},{},{},{}
+                    },{},{},{},{},{},{},{}
                   ]
                 ]
               }
@@ -647,10 +668,11 @@ export default {
           info: {
             title: "Reporte de Fondo Rotatorio",
           },
+          pageOrientation: 'landscape',
           pageMargins: [ 40,40,40,150 ],
           footer: function (currentPage, pageCount) {
               return {
-                  margin: [550,100,0,0],
+                  margin: [790,100,0,0],
                   text:currentPage.toString() + ' / ' + pageCount};
           },
           defaultStyle: {
@@ -687,7 +709,7 @@ export default {
             { text: "\n"},
             {
               table: {
-                widths: [37,65,"*","*","*",25,85,30,20],
+                widths: [37,65,"*","*","*",25,85,30,20,140,80],
                 body: [
                   [
                     {
@@ -724,7 +746,15 @@ export default {
                     },
                     {
                       alignment: "center",
-                      text: " "
+                      text: "Est."
+                    },
+                    {
+                      alignment: "center",
+                      text: "Motivo"
+                    },
+                    {
+                      alignment: "center",
+                      text: "Anulado por:"
                     }
                   ],
                   [
@@ -773,22 +803,30 @@ export default {
                       color: 'red',
                       type:"none",
                       ol: [listAnulado]
+                    },
+                    {
+                      type: "none",
+                      ol: [listMotivo]
+                    },
+                    {
+                      type:"none",
+                      ol: [listUsuario]
                     }
                   ],
                   [
                     {
-                      colSpan: 2,
                       alignment: "center",
                       text: "Total"
-                    },{},
-                    {
-                      alignment: "right",  
-                      text: sumaImporteTotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
                     },
                     {
-                      colSpan: 6,
+                      colSpan: 2,
+                      alignment: "right",  
+                      text: sumaImporteTotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+                    },{},
+                    {
+                      colSpan: 8,
                       text: " "
-                    },{},{},{},{},{}
+                    },{},{},{},{},{},{},{}
                   ]
                 ]
               }
@@ -890,7 +928,14 @@ export default {
                     Igv: element.Igv,
                     ImpIGV: element.MontoIgv,
                     ValorVenta: (element.ImporteTotalBoleta-element.MontoIgv),
-                    Subtipo: "Recaudación por efectivo de caja"
+                    Subtipo: "Recaudación por efectivo de caja",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -902,7 +947,14 @@ export default {
                     Igv: element.Igv,
                     ImpIGV: element.MontoIgv,
                     ValorVenta: (element.ImporteTotalBoleta-element.MontoIgv),
-                    Subtipo: "Pago de facturas - Cheque"
+                    Subtipo: "Pago de facturas - Cheque",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -914,7 +966,14 @@ export default {
                     Igv: element.Igv,
                     ImpIGV: element.MontoIgv,
                     ValorVenta: (element.ImporteTotalBoleta-element.MontoIgv),
-                    Subtipo: "Pago de facturas - Nota de Abono"
+                    Subtipo: "Pago de facturas - Nota de Abono",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -926,7 +985,14 @@ export default {
                     Igv: element.Igv,
                     ImpIGV: element.MontoIgv,
                     ValorVenta: (element.ImporteTotalBoleta-element.MontoIgv),
-                    Subtipo: "Otros pagos"
+                    Subtipo: "Otros pagos",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -961,7 +1027,14 @@ export default {
                     Igv: element.Igv,
                     ImpIGV: element.MontoIgv,
                     ValorVenta: (element.ImporteTotalBoleta-element.MontoIgv),
-                    Subtipo: "Recaudación por efectivo de caja"
+                    Subtipo: "Recaudación por efectivo de caja",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -973,7 +1046,14 @@ export default {
                     Igv: element.Igv,
                     ImpIGV: element.MontoIgv,
                     ValorVenta: (element.ImporteTotalBoleta-element.MontoIgv),
-                    Subtipo: "Pago de facturas - Cheque"
+                    Subtipo: "Pago de facturas - Cheque",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -985,7 +1065,14 @@ export default {
                     Igv: element.Igv,
                     ImpIGV: element.MontoIgv,
                     ValorVenta: (element.ImporteTotalBoleta-element.MontoIgv),
-                    Subtipo: "Pago de facturas - Nota de Abono"
+                    Subtipo: "Pago de facturas - Nota de Abono",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -997,7 +1084,14 @@ export default {
                     Igv: element.Igv,
                     ImpIGV: element.MontoIgv,
                     ValorVenta: (element.ImporteTotalBoleta-element.MontoIgv),
-                    Subtipo: "Otros pagos"
+                    Subtipo: "Otros pagos",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
                   }
                   listData.push(data)
                 }
@@ -4549,7 +4643,7 @@ export default {
 		}
 	},
 	created(){
-    this.noLogin();
+    // this.noLogin();
     this.supervisor = new Supervisor();
     this.validarRoles();
     this.fondoRotatorio = new FondoRotatorio();
