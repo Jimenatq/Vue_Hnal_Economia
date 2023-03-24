@@ -116,17 +116,23 @@
 						<div class="flex">
               <h5 class="mr-7">Usuario:</h5>  {{usuario.Usuario}}
             </div>
-              <h5 class="mt-0">Nombres Completos:</h5>  
-              <p class="text-center m-0">{{usuario.NombresCompletos}}</p>
+            <div class="flex">
+              <h5 class="mr-7">Nombres:</h5>
+            </div>
+            <p class="text-center m-0">{{usuario.NombresCompletos}}</p>
             <br/>
-            <h5 class="mt-0">Agregar un rol:</h5> 
+            <div class="flex">
+              <h5>Agregar un rol:</h5>
+            </div>
             <AutoComplete placeholder="Ingrese un rol" id="dd" :dropdown="true" :multiple="false"
               v-model="descripcion" :suggestions="autoFilteredValue"
               @change="asignarValorRol($event,usuario)"
               @complete="buscarRoles($event)" field="Descripcion" />
             <Button id="button-agregar" v-tooltip="'Agregar Rol'" icon="pi pi-plus" class="p-button-success ml-4"
               @click="agregarRol()" />
-              <h5>Roles:</h5>
+              <div class="flex mt-3">
+                <h5>Roles:</h5>
+              </div>
               <div v-if="listaRolesUsuario.length!=0" >
                 <div class="field col-12 grid m-0" :key="i + 'neo'" v-for="(userRol, i) of listaRolesUsuario">
                   <div class="field col-12 md:col-9 m-0 flex justify-content-center align-items-center">
