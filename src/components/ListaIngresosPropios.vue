@@ -3810,7 +3810,7 @@ export default {
 		}
 	},
 	created(){
-    // this.noLogin();
+    this.noLogin();
     this.supervisor = new Supervisor();
     this.validarRoles();
     this.ingresosPropios = new IngresosPropios();
