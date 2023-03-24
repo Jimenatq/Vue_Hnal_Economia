@@ -13,8 +13,8 @@
 						</div>
 					</template>
 					<template v-slot:end>
-						<Button label="Reporte PDF"  v-tooltip="'Imprimir reporte PDF'" icon="pi pi-upload" class="p-button-help mri-1" @click="abrirReporte(1)"  />
-						<Button label="Reporte Excel" v-tooltip="'Imprimir reporte Excel'" icon="pi pi-upload" class="p-button-info" @click="abrirReporte(2)"  />
+						<Button label="Reporte PDF"  v-tooltip.bottom="'Imprimir reporte PDF'" icon="pi pi-upload" class="p-button-help mri-1" @click="abrirReporte(1)"  />
+						<Button label="Reporte Excel" v-tooltip.bottom="'Imprimir reporte Excel'" icon="pi pi-upload" class="p-button-info" @click="abrirReporte(2)"  />
 					</template>
 				</Toolbar>
 				<DataTable :value="ListaRegistros" :paginator="true" class="p-datatable-gridlines" :rows="10" dataKey="IdRegistro" :rowHover="true" 
@@ -25,7 +25,7 @@
                             <!-- <Button type="button" icon="pi pi-filter-slash" label="Borrar Filtros" class="p-button-outlined mb-2" @click="BorrarFiltros()"/> -->
                             <span class="p-input-icon-left mb-2">
                                 <i class="pi pi-filter" />
-                                <InputText v-model="listaPorAnio" style="width: 7rem" @change="obtenerRegistros()"/>
+                                <InputText v-tooltip="'Filtro de registros por año'" v-model="listaPorAnio" style="width: 7rem" @change="obtenerRegistros()"/>
                             </span>
                             <span class="p-input-icon-left mb-2">
                                 <i class="pi pi-search" />

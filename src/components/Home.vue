@@ -11,7 +11,7 @@
                         {{ $store.state.userName }}</div>
 						<br />
 						<div class="flex justify-content-center align-items-center m-auto">
-							<img class=" wdt" src="images/hospital-nacional-arzobispo-loayza.jpg" alt="hospital-nacional-arzobispo-loayza" />
+							<img class="wdt" src="images/hospital-nacional-arzobispo-loayza.jpg" alt="hospital-nacional-arzobispo-loayza" />
 						</div>
 					</div>
 				</div>
@@ -35,6 +35,7 @@ export default {
 </script>
 <style>
 	.wdt{
-		width: 100% !important;
+		width: 75% !important;
+		border-radius: 5%;
 	}
 </style>

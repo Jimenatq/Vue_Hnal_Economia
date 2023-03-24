@@ -14,8 +14,8 @@
 					</template>
 
 					<template v-slot:end>
-            <Button label="Reporte PDF"  v-tooltip="'Imprimir reporte PDF'" icon="pi pi-upload" class="p-button-help mri-1" @click="abrirReporte(1)"  />
-						<Button label="Reporte Excel" v-tooltip="'Imprimir reporte Excel'" icon="pi pi-upload" class="p-button-info" @click="abrirReporte(2)"  />
+            <Button label="Reporte PDF"  v-tooltip.bottom="'Imprimir reporte PDF'" icon="pi pi-upload" class="p-button-help mri-1" @click="abrirReporte(1)"  />
+						<Button label="Reporte Excel" v-tooltip.bottom="'Imprimir reporte Excel'" icon="pi pi-upload" class="p-button-info" @click="abrirReporte(2)"  />
 					</template>
 				</Toolbar>
 				<DataTable ref="dt"  :value="ListaRegistros" :paginator="true" class="p-datatable-gridlines" :rows="10" dataKey="IdRegistro" :rowHover="true" 
@@ -26,7 +26,7 @@
             <div class="flex justify-content-between flex-column sm:flex-row">
               <span class="p-input-icon-left mb-2">
                 <i class="pi pi-filter" />
-                <InputText v-model="listaPorAnio" style="width: 7rem" @change="obtenerRegistros()"/>
+                <InputText v-tooltip="'Filtro de registros por año'" v-model="listaPorAnio" style="width: 7rem" @change="obtenerRegistros()"/>
               </span>
               <!-- <Button type="button" icon="pi pi-filter-slash" label="Borrar Filtros" class="p-button-outlined mb-2" @click="BorrarFiltros()"/> -->
               <span class="p-input-icon-left mb-2">
@@ -166,7 +166,7 @@
 					<div class="align-items-center justify-content-center" :style="{padding: '0 40px'}">
 						<p>Ingrese el motivo:</p>
             <Textarea v-model="motivo" placeholder="Ingrese el motivo" :autoResize="true" class="w-full"
-                rows="2" cols="30" />
+                rows="2" cols="30" maxlength="25"/>
             <br />
           </div>
 					<template #footer>
@@ -327,11 +327,11 @@ export default {
       })
     },
     verificarMotivo(motivo){
-      if(motivo.length>14&&motivo.length<21){
+      if(motivo.length>14&&motivo.length<26){
         this.anularRegistro(this.registro,motivo)
       }
       else{
-        this.message = "El motivo debe tener más de 15 caracteres pero menos de 20";
+        this.message = "El motivo debe tener más de 15 caracteres pero menos de 25";
         this.mensajeErrorDialog = true;
       }
     },
@@ -467,7 +467,7 @@ export default {
           }
           else{
             listAnulado.push('Anulado')
-            listMotivo.push(element.MotivoAnulacion.slice(0,20))
+            listMotivo.push(element.MotivoAnulacion.slice(0,25))
             listUsuario.push(element.UsuarioAnulacion.slice(0,10))
           }
       })

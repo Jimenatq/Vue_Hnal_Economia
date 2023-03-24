@@ -77,9 +77,9 @@ export default {
   methods: {
     mostrar(code) {
       switch (code) {
-        case 0:
-          router.push({ path: '/modulo0' });
-          break;
+        // case 0:
+        //   router.push({ path: '/modulo0' });
+        //   break;
         case 1:
           router.push({ path: '/modulo1' });
           break;

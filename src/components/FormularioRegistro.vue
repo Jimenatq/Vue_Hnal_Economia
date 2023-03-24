@@ -19,7 +19,7 @@
           </div>
           <div class="field col-2">
             <label for="state">N° Recibo</label>
-            <InputText id="input-editar" disabled="true" v-model="NroRecibo" />
+            <InputText id="input-editar" disabled="true" v-model="NroRecibo" maxlength="6"/>
           </div>
           <div class="field col-1 p-0">
             <Button id="button-editar" v-tooltip="'Editar N° recibo'" icon="pi pi-pencil" class="p-button-secondary mr-2 mt-1-8"
@@ -79,10 +79,9 @@
                 </div>
                 <div class="field col-12 md:col-3">
                   <label for="email1">{{ asignarImporteClasificador(clasificador) }}</label>
-                  <label for="email1">{{ sumarImportes() }}</label>
-                  <InputNumber id="price" v-model="clasificador.ImporteUnitarioClasificador" mode="currency"
-                    currency="PEN" locale="es-PE"
-                    :class="{ 'p-invalid': enviar && !clasificador.ImporteUnitarioClasificador }" />
+                  <InputNumber id="price" v-model="clasificador.ImporteUnitarioClasificador" mode="currency" 
+                  currency="PEN" locale="es-PE" @input="clasificador.ImporteUnitarioClasificador= $event.value, sumarImportes();"
+                  :class="{ 'p-invalid': enviar && !clasificador.ImporteUnitarioClasificador }" />
                   <small class="p-invalid text-red" v-if="enviar && !clasificador.ImporteUnitarioClasificador">Este campo
                     es requerido.</small>
                 </div>
@@ -109,11 +108,11 @@
             </div>
             <div class="field col-12 md:col-6">
               <label for="quantity">N° de Cheque</label>
-              <InputText id="quantity" v-model="NroCheque" />
+              <InputText id="quantity" v-model="NroCheque" maxlength="9" />
             </div>
             <div class="field col-12 md:col-6">
               <label for="quantity">Monto de Cheque</label>
-              <InputNumber id="price" v-model="MontoCheque" mode="currency" currency="PEN" locale="es-PE" />
+              <InputNumber id="price" v-model="MontoCheque" mode="currency" currency="PEN" locale="es-PE" maxlength="9" />
             </div>
             <div class="field col-12">
               <label>Texto adicional</label>
@@ -158,9 +157,9 @@
               <div class="field col-12 md:col-3">
                 <label for="email1">Importe de clasif.</label>
                 <label for="email1">{{ asignarImporteClasificador(clasificador) }}</label>
-                <label for="email1">{{ sumarImportes() }}</label>
                 <InputNumber id="price" v-model="clasificador.ImporteUnitarioClasificador" mode="currency" currency="PEN"
-                  locale="es-PE" :class="{ 'p-invalid': enviar && !clasificador.ImporteUnitarioClasificador }" />
+                  locale="es-PE" :class="{ 'p-invalid': enviar && !clasificador.ImporteUnitarioClasificador }" 
+                  @input="clasificador.ImporteUnitarioClasificador= $event.value, sumarImportes();"/>
                 <small class="p-invalid text-red" v-if="enviar && !clasificador.ImporteUnitarioClasificador">Este campo
                   es requerido.</small>
               </div>
@@ -682,12 +681,10 @@ export default {
       }
     },
     sumarImportes() {
-      this.ImporteTotalBoleta = null;
-      if (this.ImporteUnitarioClasificador != 0) {
-        this.listaBoletaFormulario.forEach(element => {
-          this.ImporteTotalBoleta += element.ImporteUnitarioClasificador;
-        });
-      }
+      this.ImporteTotalBoleta = 0;
+      this.listaBoletaFormulario.forEach(element => {
+        this.ImporteTotalBoleta += element.ImporteUnitarioClasificador;
+      });
     },
     aniadirElemento() {
       const clasificador = {

@@ -10,7 +10,7 @@
             <br /><span class="text-600 font-medium">Inicia sesión para continuar</span>
           </div>
 
-          <div class="w-full md:w-10 mx-auto">
+          <form class="w-full md:w-10 mx-auto" @submit="loguearse()">
             <label for="email1" class="block text-900 text-xl font-medium mb-2">Usuario</label>
             <InputText id="email1" v-model="usuario" type="text" class="w-full mb-3" :class="{ 'p-invalid': iniciaSesion && !usuario}" placeholder="Ingrese su usuario"
               style="padding:1rem;" />
@@ -23,8 +23,8 @@
             <small class="p-invalid text-red" v-if="iniciaSesion && !clave">Este campo es requerido.<br/><br/></small>
 
             <span v-if="cargando" class="flex justify-content-center mb-4"><i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i></span>
-            <Button label="Iniciar Sesión" class="w-full p-3 text-xl" @click="loguearse()"></button>
-          </div>
+            <Button type="submit" label="Iniciar Sesión" class="w-full p-3 text-xl" ></button>
+          </form>
         </div>
       </div>
     </div>
