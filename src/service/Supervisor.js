@@ -37,9 +37,9 @@ export default class Supervisor {
       .post('/Usuarios/roles',rol).then(d => d.data);
   }
 
-  async eliminarRolUsuario(id){
+  async eliminarRolUsuario(idRol,idUsuario){
     return await axios
-      .delete('/Usuarios/roles/'+id).then(d => d.data);
+      .delete('/Usuarios/roles/'+idRol+"/"+idUsuario).then(d => d.data);
   }
 
   async getListaRolesPorUsuario(usuario){

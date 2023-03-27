@@ -10,7 +10,7 @@
             <br /><span class="text-600 font-medium">Inicia sesión para continuar</span>
           </div>
 
-          <form class="w-full md:w-10 mx-auto" @submit="loguearse()">
+          <form class="w-full md:w-10 mx-auto" @submit="loguearse($event)">
             <label for="email1" class="block text-900 text-xl font-medium mb-2">Usuario</label>
             <InputText id="email1" v-model="usuario" type="text" class="w-full mb-3" :class="{ 'p-invalid': iniciaSesion && !usuario}" placeholder="Ingrese su usuario"
               style="padding:1rem;" />
@@ -18,7 +18,7 @@
 
             <label for="password1" class="block text-900 font-medium text-xl mb-2">Clave</label>
             <Password id="password1" v-model="clave" placeholder="Ingrese su clave" :toggleMask="true"
-              :feedback="false" class="w-full mb-3" inputClass="w-full" inputStyle="padding:1rem"
+              :feedback="false" class="w-full mb-3" inputClass="w-full"
               :class="{ 'p-invalid': iniciaSesion && !clave}"></Password>
             <small class="p-invalid text-red" v-if="iniciaSesion && !clave">Este campo es requerido.<br/><br/></small>
 
@@ -74,27 +74,29 @@ export default {
     footerImage() {
       return this.$appState.darkTheme ? 'images/logo.png' : 'images/logo.png';
     },
-    loguearse() {
+    async loguearse(event) {
+      event.preventDefault();
       this.cargando = true;
       this.iniciaSesion = true;
       const user = {
         Usuario: this.usuario,
         Clave: this.clave
       }
-      this.login.validarUsuario(user)
+      await this.login.validarUsuario(user)
         .then(data => {
           this.cargando = false;
+          console.log(data)
           if(data.error){
             this.message = data.error;
             this.mensajeErrorDialog = true;
           }
           else{
             axios.defaults.headers.common['Authorization'] = 'Bearer '+ data.token;
+            this.$router.push({ path: '/home' });
             localStorage.setItem('token', data.token);
             this.$store.commit('setAuthenticated',true);
             this.$store.commit('setUserName', data.userData.userName);
             this.$store.commit('setNameCompleto', data.userData.NameCompleto);
-            this.$router.push({ path: '/home' });
           }
         })
         .catch(err => {

@@ -444,9 +444,9 @@ export default {
     editar: String,
     actualizar: Function,
     cerrarDialog: Function,
-    valorTipo: String
+    valorTipo: String,
+    tipoClasificadores: String
   },
-  //["title", "editar"],
   data() {
     return {
       message: null,
@@ -466,7 +466,8 @@ export default {
           ImporteUnitarioClasificador: null,
         }
       ],
-      ListaClasificadores: null,
+      ListaClasificadoresIngresosPropios: [],
+      ListaClasificadoresFondoRotatorio: [],
       ValueTipo: {
         Codigo: null,
         Descripcion: null,
@@ -634,7 +635,6 @@ export default {
       this.confirmaEliminacionDialog = false;
     },
     async eliminarClasifDefinit(value){
-      await axios
       this.formulario.deleteClasificadorDefinitivamente(value.IdBoleta)
         .then(async(data)=>{
           this.listaBoletaFormulario.splice(this.id, 1);
@@ -722,10 +722,18 @@ export default {
       })
     },
     obtenerClasificadores() {
-      this.formulario.getClasificadores()
-      .then(data => {
-        this.ListaClasificadores = data;
-      })
+      if(this.tipoClasificadores.tipoClasificadores == 5){
+        this.formulario.getClasificadores(5)
+        .then(data => {
+          this.ListaClasificadoresIngresosPropios = data;
+        })
+      }
+      else if(this.tipoClasificadores.tipoClasificadores == 4){
+        this.formulario.getClasificadores(4)
+        .then(data => {
+          this.ListaClasificadoresFondoRotatorio = data;
+        })
+      }
     },
     async obtenerCorrelativo(value,anioFecha) {
       const valor = {
@@ -949,8 +957,6 @@ export default {
       }
     },
     async cambioTipo() {
-      // console.log(this.ValueTipo.Codigo)
-      this.editar.modoEditar
       if(!this.editar.modoEditar){
         if (this.ValueTipo.Codigo == 1&&this.Fecha) {
           let anioFecha = this.Fecha.getFullYear()
@@ -965,22 +971,45 @@ export default {
       }
     },
     BuscarCodClasificadores(event) {
-      if (!event.query.trim().length) {
-        this.autoFilteredValue = [...this.ListaClasificadores];
+      if(this.tipoClasificadores.tipoClasificadores == 5){
+        if (!event.query.trim().length) {
+          this.autoFilteredValue = [...this.ListaClasificadoresIngresosPropios];
+        }
+        else {
+          this.autoFilteredValue = this.ListaClasificadoresIngresosPropios.filter((clasificador) => {
+            return clasificador.CodClasificadorArea.toString().toLowerCase().startsWith(event.query.toLowerCase())
+          })
+        }
       }
-      else {
-        this.autoFilteredValue = this.ListaClasificadores.filter((clasificador) => {
-          return clasificador.CodClasificadorArea.toString().toLowerCase().startsWith(event.query.toLowerCase())
-        })
+      else if(this.tipoClasificadores.tipoClasificadores == 4){
+        if (!event.query.trim().length) {
+          this.autoFilteredValue = [...this.ListaClasificadoresFondoRotatorio];
+        }
+        else {
+          this.autoFilteredValue = this.ListaClasificadoresFondoRotatorio.filter((clasificador) => {
+            return clasificador.CodClasificadorArea.toString().toLowerCase().startsWith(event.query.toLowerCase())
+          })
+        }
       }
     },
     BuscarNombreClasificadores(event) {
-      if (!event.query.trim().length) {
-        this.autoFilteredValue = [...this.ListaClasificadores];
-      } else {
-        this.autoFilteredValue = this.ListaClasificadores.filter((clasificador) => {
+      if(this.tipoClasificadores.tipoClasificadores == 5){
+        if (!event.query.trim().length) {
+          this.autoFilteredValue = [...this.ListaClasificadoresIngresosPropios];
+        } else {
+          this.autoFilteredValue = this.ListaClasificadoresIngresosPropios.filter((clasificador) => {
           return clasificador.Descripcion.toLowerCase().startsWith(event.query.toLowerCase())
-        })
+          })
+        }
+      }
+      else if(this.tipoClasificadores.tipoClasificadores == 4){
+        if (!event.query.trim().length) {
+          this.autoFilteredValue = [...this.ListaClasificadoresFondoRotatorio];
+        } else {
+          this.autoFilteredValue = this.ListaClasificadoresFondoRotatorio.filter((clasificador) => {
+            return clasificador.Descripcion.toLowerCase().startsWith(event.query.toLowerCase())
+          })
+        }
       }
     },
     async editarRegistro() {

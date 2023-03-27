@@ -32,9 +32,9 @@ export default class Formulario {
       .get('/Parametros/SubtiposFR').then(d => d.data);
   }
 
-  async getClasificadores() {
+  async getClasificadores(tipoParametro) {
     return await axios 
-      .get('/Parametros/Clasificadores').then(d => d.data);
+      .get('/Parametros/Clasificadores/'+tipoParametro).then(d => d.data);
   }
 
   async editarRegistroIngresos(registro) {

@@ -97,7 +97,7 @@
 				</DataTable>
 				<Dialog v-model:visible="registroDialog" :style="{width: '700px'}" header="Detalles del registro" :modal="true">
 					<div class="flex align-items-center justify-content-center">
-						<registro :title={registro} :editar={modoEditar} :actualizar={obtenerRegistros} :cerrarDialog={cerrarRegistro} :valorTipo={valorTipo}
+						<registro :title={registro} :editar={modoEditar} :actualizar={obtenerRegistros} :cerrarDialog={cerrarRegistro} :valorTipo={valorTipo} :tipoClasificadores={tipoClasificadores}
 							/>
 					</div>
 				</Dialog>
@@ -212,11 +212,16 @@ export default {
       activarRegistroDialog: false,
 			eliminarRegistroDialog: false,
 			registroDialog: false,
-      //viene de los props
+      //viene de los props:
+      //es para saber que clasificadores mostrar segun el tipo
+      tipoClasificadores: null,
+      //para saber si es el formulario de editar
 			modoEditar: false,
+      //para llevar toda la informacion del registro
 			registro: null,
+      //para que solo pueda registrar su tipo de registro (solo ingresos propios o fondo rotatorio)
       valorTipo: null,
-      //
+      //fin de los props
 			reporteDialog: false,
       meses: [
         {
@@ -3242,7 +3247,7 @@ export default {
       }
     },
     imprimir(registro){
-			registro.dia = registro.Fecha.slice(8,10)
+			registro.dia = registro.Fecha.slice(8,10);
 			registro.mes =  registro.Fecha.slice(5,7);
 			registro.anio = registro.Fecha.slice(0,4);
       let listClasifImpresion= [];
@@ -3758,6 +3763,7 @@ export default {
 		},
 		modalEditar(registro){
 			this.registro = registro;
+      this.tipoClasificadores = 5;
 			this.registroDialog = true;
       this.valorTipo={
         IdParametro: 1,
@@ -3797,7 +3803,7 @@ export default {
 		},
 		nuevoRegistro(){
 			this.modoEditar = false;
-			// this.registro = {}
+			this.tipoClasificadores = 5;
       this.valorTipo={
         IdParametro: 1,
         Codigo: 1,

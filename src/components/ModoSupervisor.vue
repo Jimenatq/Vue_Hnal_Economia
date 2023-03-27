@@ -286,7 +286,7 @@ export default {
     },
     eliminarRol(IdUsuarioRol){
       this.cargando=true;
-      this.supervisor.eliminarRolUsuario(IdUsuarioRol)
+      this.supervisor.eliminarRolUsuario(IdUsuarioRol,this.usuario.IdUsuario)
       .then(async(data)=>{
         this.cargando=false;
         await this.obtenerListaUsuarios();
