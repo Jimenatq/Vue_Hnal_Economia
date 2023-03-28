@@ -19,7 +19,7 @@
           </div>
           <div class="field col-2">
             <label for="state">N° Recibo</label>
-            <InputText id="input-editar" disabled="true" v-model="NroRecibo" maxlength="6"/>
+            <InputText id="input-editar" disabled="true" v-model="NroRecibo" maxlength="5"/>
           </div>
           <div class="field col-1 p-0">
             <Button id="button-editar" v-tooltip="'Editar N° recibo'" icon="pi pi-pencil" class="p-button-secondary mr-2 mt-1-8"
@@ -39,69 +39,65 @@
                 placeholder="Seleccione subtipo del registro" :class="{ 'p-invalid': enviar && !ValueSubtipo }" />
               <small class="p-invalid text-red" v-if="enviar && !ValueSubtipo">Este campo es requerido.</small>
             </div>
-            <!-- <div> -->
-            
-              <div class="field col-12 grid mbo-0">
-                <div class="field col-12 mb-0">
-                  <br />
-                  <h5 class="m-0">CLASIFICADORES</h5>
-                </div>
-                <div class="field col-12">
-                  <Button v-tooltip="'Añadir clasificador'" icon="pi pi-plus" class="p-button-success m-0"
-                    @click="aniadirElemento()" />
-                </div>
-                <div class="field col-12 md:col-4">
-                  <label for="email1">Código clasificador</label>
-                </div>
-                <div class="field col-12 md:col-4">
-                  <label for="email1">Nombre del clasificador</label>
-                </div>
-                <div class="field col-12 md:col-4">
-                  <label for="email1">Importe de clasif.</label>
-                </div>
+            <div class="field col-12 grid mbo-0">
+              <div class="field col-12 mb-0">
+                <br />
+                <h5 class="m-0 mb-5">CLASIFICADORES</h5>
               </div>
-              <div class="field col-12 grid" :key="i + 'neo'" v-for="(clasificador, i) of listaBoletaFormulario">
-                <div class="field col-12 md:col-4">
-                  <AutoComplete placeholder="Ingrese clasificador" id="dd" :dropdown="true" :multiple="false"
-                    v-model="clasificador.Codigo" :suggestions="autoFilteredValue"
-                    @change="cambioCodigoClasificador($event, clasificador)" @complete="BuscarCodClasificadores($event)"
-                    field="CodClasificadorArea" :class="{ 'p-invalid': enviar && !clasificador.Codigo }" />
-                  <small class="p-invalid text-red" v-if="enviar && !clasificador.Codigo">Este campo es
-                    requerido.</small>
-                </div>
-                <div class="field col-12 md:col-4">
-                  <AutoComplete placeholder="Ingrese clasificador" id="dd" :dropdown="false" :multiple="false"
-                    v-model="clasificador.Descripcion" @change="cambioNombreClasificador($event, clasificador)"
-                    :suggestions="autoFilteredValue" @complete="BuscarNombreClasificadores($event)" field="Descripcion"
-                    :class="{ 'p-invalid': enviar && !clasificador.Descripcion }" />
-                  <small class="p-invalid text-red" v-if="enviar && !clasificador.Descripcion">Este campo es
-                    requerido.</small>
-                </div>
-                <div class="field col-12 md:col-3">
-                  <label for="email1">{{ asignarImporteClasificador(clasificador) }}</label>
-                  <InputNumber id="price" v-model="clasificador.ImporteUnitarioClasificador" mode="currency" 
-                  currency="PEN" locale="es-PE" @input="clasificador.ImporteUnitarioClasificador= $event.value, sumarImportes();"
-                  :class="{ 'p-invalid': enviar && !clasificador.ImporteUnitarioClasificador }" />
-                  <small class="p-invalid text-red" v-if="enviar && !clasificador.ImporteUnitarioClasificador">Este campo
-                    es requerido.</small>
-                </div>
-                <div class="field col-12 md:col-1">
-                  <Button icon="pi pi-times" v-tooltip="'Eliminar clasificador'" class="p-button-danger mr-2" @click="eliminarMedicamento(i)" />
-                </div>
+              <div class="field col-12 md:col-4">
+                <label for="email1">Código clasificador</label>
               </div>
-              <div class="field col-12 grid">
-                <div class="field col-12 md:col-4"></div>
-                <div class="field col-12 md:col-4 alineacion">
-                  <label for="email1">Importe total</label>
-                </div>
-                <div class="field col-12 md:col-3">
-                  <InputNumber id="price" v-model="ImporteTotalBoleta" mode="currency" currency="PEN" disabled
-                    locale="es-PE" required="true " :class="{ 'p-invalid': enviar && !ImporteTotalBoleta }" />
-                  <small class="p-invalid text-red" v-if="enviar && !ImporteTotalBoleta">Este campo es
-                    requerido.</small>
-                </div>
+              <div class="field col-12 md:col-4">
+                <label for="email1">Nombre del clasificador</label>
               </div>
-            <!-- </div> -->
+              <div class="field col-12 md:col-4">
+                <label for="email1">Importe de clasif.</label>
+              </div>
+            </div>
+            <div class="field col-12 grid" :key="i + 'neo'" v-for="(clasificador, i) of listaBoletaFormulario">
+              <div class="field col-12 md:col-4">
+                <AutoComplete placeholder="Ingrese clasificador" id="dd" :dropdown="true" :multiple="false"
+                  v-model="clasificador.Codigo" :suggestions="autoFilteredValue"
+                  @change="cambioCodigoClasificador($event, clasificador)" @complete="BuscarCodClasificadores($event)"
+                  field="CodClasificadorArea" :class="{ 'p-invalid': enviar && !clasificador.Codigo }" />
+                <small class="p-invalid text-red" v-if="enviar && !clasificador.Codigo">Este campo es
+                  requerido.</small>
+              </div>
+              <div class="field col-12 md:col-4">
+                <AutoComplete placeholder="Ingrese clasificador" id="dd" :dropdown="false" :multiple="false"
+                  v-model="clasificador.Descripcion" @change="cambioNombreClasificador($event, clasificador)"
+                  :suggestions="autoFilteredValue" @complete="BuscarNombreClasificadores($event)" field="Descripcion"
+                  :class="{ 'p-invalid': enviar && !clasificador.Descripcion }" />
+                <small class="p-invalid text-red" v-if="enviar && !clasificador.Descripcion">Este campo es
+                  requerido.</small>
+              </div>
+              <div class="field col-12 md:col-3">
+                <label for="email1">{{ asignarImporteClasificador(clasificador) }}</label>
+                <InputNumber id="price" v-model="clasificador.ImporteUnitarioClasificador" mode="currency" 
+                currency="PEN" locale="es-PE" @input="clasificador.ImporteUnitarioClasificador= $event.value, sumarImportes();"
+                :class="{ 'p-invalid': enviar && !clasificador.ImporteUnitarioClasificador }" />
+                <small class="p-invalid text-red" v-if="enviar && !clasificador.ImporteUnitarioClasificador">Este campo
+                  es requerido.</small>
+              </div>
+              <div class="field col-12 md:col-1">
+                <Button icon="pi pi-times" v-tooltip="'Eliminar clasificador'" class="p-button-danger mr-2" @click="eliminarMedicamento(i)" />
+              </div>
+            </div>
+            <div class="field col-12 grid">
+              <div class="field col-12 md:col-4">
+                <Button v-tooltip="'Añadir clasificador'" icon="pi pi-plus" class="p-button-success m-0"
+                  @click="aniadirElemento()" />
+              </div>
+              <div class="field col-12 md:col-4 alineacion">
+                <label for="email1">Importe total</label>
+              </div>
+              <div class="field col-12 md:col-3">
+                <InputNumber id="price" v-model="ImporteTotalBoleta" mode="currency" currency="PEN" disabled
+                  locale="es-PE" required="true " :class="{ 'p-invalid': enviar && !ImporteTotalBoleta }" />
+                <small class="p-invalid text-red" v-if="enviar && !ImporteTotalBoleta">Este campo es
+                  requerido.</small>
+              </div>
+            </div>
             <div class="field col-12">
               <h5>GLOSA</h5>
               <br />
@@ -170,7 +166,7 @@
             <div class="field col-12 grid">
               <div class="field col-12 md:col-2">
                 <label for="state">IGV</label>
-                <InputText id="quantity" v-model="Igv" :class="{ 'p-invalid': enviar && !Igv }" />
+                <InputText id="quantity" v-model="Igv" :class="{ 'p-invalid': enviar && !Igv }" maxlength="2"/>
                 <small class="p-invalid text-red" v-if="enviar && !Igv">Este campo es requerido.</small>
               </div>
               <div class="field col-12 md:col-3">
@@ -341,6 +337,51 @@
                 <Button label="Guardar registro" class="p-button-success mt-3 mr-2 mb-2" @click="GuardarRegistro()" />
               </div>
             </div>
+            <div class="field col-12 grid" v-if="ValueSubtipo.Codigo == 5">
+              <div class="field col-12">
+                <label for="state">COMPROMISO DEL TRABAJADOR CARLOS HERRERA</label>
+              </div>
+              <div class="field col-12">
+                <label for="state">Nota de Informativa</label>
+                <InputText id="quantity" v-model="NotaInformativa" maxlength="45"/>
+              </div>
+              <div class="field col-12">
+                <label for="state">ACTA DE COMPROMISO SIN/N° 
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  S/. 4,476.34</label>
+              </div>
+              <div class="field col-12 md:col-3">
+                <label for="state">N° Voucher</label>
+                <InputText id="quantity" v-model="NroVoucher" maxlength="9" />
+              </div>
+              <div class="field col-12 md:col-3">
+                <label for="state">Monto Voucher</label>
+                <InputNumber id="price" v-model="MontoVoucher" mode="currency" currency="PEN" locale="es-PE" max="3"/>
+              </div>
+              <div class="field col-12 md:col-3">
+                <label for="state">N° Cheque</label>
+                <InputText id="quantity" v-model="NroCheque" />
+              </div>
+              <div class="field col-12 md:col-3">
+                <label for="state">Monto cheque</label>
+                <InputNumber id="price" v-model="MontoCheque" mode="currency" currency="PEN" locale="es-PE" />
+              </div>
+              <div class="field col-12">
+                <label for="state">BANCO DE LA NACIÓN</label><BR />
+                <label for="state">N° de Cuota</label>
+                <InputText id="quantity" v-model="NombreBanco" />
+                <label for="state">FARMACIA HOSPITAL ARZOBISPO LOAYZA</label>
+              </div>
+              <div class="field col-12 md:col-8"></div>
+              <div v-if="this.editar.modoEditar" class="field col-12 md:col-4">
+                <Button label="Modificar registro" class="p-button-success mt-3 mr-2 mb-2" @click="editarRegistro()" />
+              </div>
+              <div v-else class="field col-12 md:col-4">
+                <Button label="Guardar registro" class="p-button-success mt-3 mr-2 mb-2" @click="GuardarRegistro()" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -477,7 +518,7 @@ export default {
       NroRecibo: null,
       Fecha: new Date(),
       ImporteTotalBoleta: null,
-      Igv: null,
+      Igv: 18,
       MontoIgv: null,
       NombreEmpresa: null,
       NotaInformativa: null,

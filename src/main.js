@@ -222,5 +222,6 @@ if(token){
   axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
 }
 
-// axios.defaults.baseURL = 'http://localhost:49146/api/'
-axios.defaults.baseURL = 'http://192.168.36.121:8081/api/'
+axios.defaults.baseURL = 'http://localhost:49146/api/'
+// axios.defaults.baseURL = 'http://202.15.1.29:9091/api/'
+// axios.defaults.baseURL = 'http://192.168.36.121:8081/api/'
