@@ -169,7 +169,6 @@ export default {
             await this.supervisor.getListaRolesPorUsuario(datos)
             .then(data=>{
                 this.listaRoles = data;
-                console.log(this.listaRoles.length)
                 if(this.listaRoles.length==0){
                     this.menu.push({items: [
                         {label: 'Guia para el Usuario', icon: 'pi pi-fw pi-book', to: '/guia'}
@@ -305,12 +304,8 @@ export default {
         'AppFooter': AppFooter,
     },
     created() {
-        console.log('created')
         this.supervisor = new Supervisor();
         this.validarRoles();
-    },
-    mounted(){
-        console.log('beforeMount')
     }
 }
 </script>

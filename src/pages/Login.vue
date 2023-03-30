@@ -84,8 +84,7 @@ export default {
       }
       await this.login.validarUsuario(user)
         .then(data => {
-          this.cargando = false;
-          console.log(data)
+          this.cargando = false;  
           if(data.error){
             this.message = data.error;
             this.mensajeErrorDialog = true;

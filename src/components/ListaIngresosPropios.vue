@@ -198,6 +198,7 @@ import IngresosPropios from "../service/IngresosPropios.js";
 import exportFromJSON from "export-from-json";
 import Supervisor from '../service/Supervisor';
 import Login from "../service/Login.js";
+import Formulario from '../service/Formulario';
 
 export default {
 	data() {
@@ -291,6 +292,7 @@ export default {
 	},
   supervisor: null,
   ingresosPropios: null,
+  formulario: null,
   login: null,
 	components:{
 		"registro": registro, 
@@ -1197,7 +1199,6 @@ export default {
           })
           .catch(err=>{
             this.message = err;
-            console.log(err)
             this.mensajeErrorDialog=true;
           })
         }
@@ -1281,7 +1282,7 @@ export default {
             { text: "\n" },
             {
               table: {
-                widths: [50, "*", 50, 50],
+                widths: [50, "*", 60, 50],
                 heights: [10, 10, 250],
                 body: [
                   [
@@ -1455,14 +1456,14 @@ export default {
                               [{ text: " ", alignment: "center" }],
                               [
                                 {
-                                  text: "(1) DIRECTOR DE PRESUPUESTO Y CONTABILIDAD\n(SELLO Y FIRMA)",
+                                  text: "(1) JEFE DE LA OFICINA DE ECONOMÍA\n(SELLO Y FIRMA)",
                                   alignment: "center",
                                 },
                               ],
                               [{ text: " ", alignment: "center" }],
                               [
                                 {
-                                  text: "(2) RECEPCIONISTA DEL DEPOSITO\n(SELLO Y FIRMA)",
+                                  text: "(2) CAJA GENERAL\n(SELLO Y FIRMA)",
                                   alignment: "center",
                                 },
                               ],
@@ -1559,7 +1560,7 @@ export default {
             { text: "\n" },
             {
               table: {
-                widths: [50, "*", 50, 50],
+                widths: [50, "*", 60, 50],
                 heights: [10, 10, 250],
                 body: [
                   [
@@ -1733,14 +1734,14 @@ export default {
                               [{ text: " ", alignment: "center" }],
                               [
                                 {
-                                  text: "(1) DIRECTOR DE PRESUPUESTO Y CONTABILIDAD\n(SELLO Y FIRMA)",
+                                  text: "(1) JEFE DE LA OFICINA DE ECONOMÍA\n(SELLO Y FIRMA)",
                                   alignment: "center",
                                 },
                               ],
                               [{ text: " ", alignment: "center" }],
                               [
                                 {
-                                  text: "(2) RECEPCIONISTA DEL DEPOSITO\n(SELLO Y FIRMA)",
+                                  text: "(2) CAJA GENERAL\n(SELLO Y FIRMA)",
                                   alignment: "center",
                                 },
                               ],
@@ -1837,7 +1838,7 @@ export default {
             { text: "\n" },
             {
               table: {
-                widths: [50, "*", 50, 50],
+                widths: [50, "*", 60, 50],
                 heights: [10, 10, 250],
                 body: [
                   [
@@ -2010,14 +2011,14 @@ export default {
                               [{ text: " ", alignment: "center" }],
                               [
                                 {
-                                  text: "(1) DIRECTOR DE PRESUPUESTO Y CONTABILIDAD\n(SELLO Y FIRMA)",
+                                  text: "(1) JEFE DE LA OFICINA DE ECONOMÍA\n(SELLO Y FIRMA)",
                                   alignment: "center",
                                 },
                               ],
                               [{ text: " ", alignment: "center" }],
                               [
                                 {
-                                  text: "(2) RECEPCIONISTA DEL DEPOSITO\n(SELLO Y FIRMA)",
+                                  text: "(2) CAJA GENERAL\n(SELLO Y FIRMA)",
                                   alignment: "center",
                                 },
                               ],
@@ -2114,7 +2115,7 @@ export default {
             { text: "\n" },
             {
               table: {
-                widths: [50, "*", 50, 50],
+                widths: [50, "*", 60, 50],
                 heights: [10, 10, 250],
                 body: [
                   [
@@ -2286,14 +2287,14 @@ export default {
                               [{ text: " ", alignment: "center" }],
                               [
                                 {
-                                  text: "(1) DIRECTOR DE PRESUPUESTO Y CONTABILIDAD\n(SELLO Y FIRMA)",
+                                  text: "(1) JEFE DE LA OFICINA DE ECONOMÍA\n(SELLO Y FIRMA)",
                                   alignment: "center",
                                 },
                               ],
                               [{ text: " ", alignment: "center" }],
                               [
                                 {
-                                  text: "(2) RECEPCIONISTA DEL DEPOSITO\n(SELLO Y FIRMA)",
+                                  text: "(2) CAJA GENERAL\n(SELLO Y FIRMA)",
                                   alignment: "center",
                                 },
                               ],
@@ -3246,402 +3247,51 @@ export default {
         pdfMake.createPdf(docDefinition).print();
       }
     },
-    imprimir(registro){
+    async imprimir(registro){
 			registro.dia = registro.Fecha.slice(8,10);
 			registro.mes =  registro.Fecha.slice(5,7);
 			registro.anio = registro.Fecha.slice(0,4);
-      let listClasifImpresion= [];
-      registro.listBoletas.forEach((element) => {
-        if (element.IdParametro == 16) {
-          const boleta = {
-            CodClasificadorExterno: 133415,
-            Descripcion: "Cirugia Especialidades",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
+      let listClasifImpresion =await Promise.all(registro.listBoletas.map(async (element) => {
+        var detalle = await this.formulario.getDetalleClasificador(element.IdParametro)
+        console.error(detalle[0].Descripcion)
+        return {
+          CodClasificadorExterno: detalle[0].CodClasificadorExterno,
+          Descripcion: detalle[0].Descripcion,
+          ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
         }
-        if (element.IdParametro == 17) {
-          const boleta = {
-            CodClasificadorExterno: 133415,
-            Descripcion: "Cardio Vascular",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 18) {
-          const boleta = {
-            CodClasificadorExterno: 133415,
-            Descripcion: "Cabeza - Cuello",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 19) {
-          const boleta = {
-            CodClasificadorExterno: 133415,
-            Descripcion: "Colproctologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 20) {
-          const boleta = {
-            CodClasificadorExterno: 133415,
-            Descripcion: "Oftalmologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 21) {
-          const boleta = {
-            CodClasificadorExterno: "",
-            Descripcion: "Otorrinolaringologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 22) {
-          const boleta = {
-            CodClasificadorExterno: 133425,
-            Descripcion: "Audiometria",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 23) {
-          const boleta = {
-            CodClasificadorExterno: 133415,
-            Descripcion: "Quemados",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 24) {
-          const boleta = {
-            CodClasificadorExterno: 133415,
-            Descripcion: "Traumatologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 25) {
-          const boleta = {
-            CodClasificadorExterno: 133415,
-            Descripcion: "Urologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 26) {
-          const boleta = {
-            CodClasificadorExterno: 133415,
-            Descripcion: "Neurocirugia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 27) {
-          const boleta = {
-            CodClasificadorExterno: 133415,
-            Descripcion: "Cirugia General",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 28) {
-          const boleta = {
-            CodClasificadorExterno: 133415,
-            Descripcion: "Ginecologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 29) {
-          const boleta = {
-            CodClasificadorExterno: 133416,
-            Descripcion: "Inmunoreumatologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 30) {
-          const boleta = {
-            CodClasificadorExterno: 133416,
-            Descripcion: "Angiologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 31) {
-          const boleta = {
-            CodClasificadorExterno: 133416,
-            Descripcion: "Cardiologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 32) {
-          const boleta = {
-            CodClasificadorExterno: 133423,
-            Descripcion: "Electrocardiograma",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 33) {
-          const boleta = {
-            CodClasificadorExterno: 133416,
-            Descripcion: "Dermatologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 34) {
-          const boleta = {
-            CodClasificadorExterno: 133416,
-            Descripcion: "Endocrinologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 35) {
-          const boleta = {
-            CodClasificadorExterno: 133416,
-            Descripcion: "Gastroenterologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 36) {
-          const boleta = {
-            CodClasificadorExterno: 133416,
-            Descripcion: "Nefrologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 37) {
-          const boleta = {
-            CodClasificadorExterno: 133411,
-            Descripcion: "Neumologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 38) {
-          const boleta = {
-            CodClasificadorExterno: 133411,
-            Descripcion: "Psicologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 39) {
-          const boleta = {
-            CodClasificadorExterno: 133411,
-            Descripcion: "Psiquiatria",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 40) {
-          const boleta = {
-            CodClasificadorExterno: 133431,
-            Descripcion: "Serv. Top. Y Rehab.",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 41) {
-          const boleta = {
-            CodClasificadorExterno: 133411,
-            Descripcion: "Neurologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 42) {
-          const boleta = {
-            CodClasificadorExterno: 133412,
-            Descripcion: "Odontoestamologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 43) {
-          const boleta = {
-            CodClasificadorExterno: 133416,
-            Descripcion: "Unidad de Cuidados Inten.",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 44) {
-          const boleta = {
-            CodClasificadorExterno: 133421,
-            Descripcion: "Anatomia Patologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 45) {
-          const boleta = {
-            CodClasificadorExterno: 133421,
-            Descripcion: "Laboratorio Clinico",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 46) {
-          const boleta = {
-            CodClasificadorExterno: 133411,
-            Descripcion: "Ticket Pac. Antiguo",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 47) {
-          const boleta = {
-            CodClasificadorExterno: 133424,
-            Descripcion: "Ecografia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 48) {
-          const boleta = {
-            CodClasificadorExterno: 133424,
-            Descripcion: "Radiografia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 49) {
-          const boleta = {
-            CodClasificadorExterno: 133424,
-            Descripcion: "Medicina Nuclear",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 50) {
-          const boleta = {
-            CodClasificadorExterno: 133414,
-            Descripcion: "Atenc. Emergencia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 51) {
-          const boleta = {
-            CodClasificadorExterno: 133416,
-            Descripcion: "Hospitalizacion",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 52) {
-          const boleta = {
-            CodClasificadorExterno: 1334399,
-            Descripcion: "Transp. Ambulancia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 53) {
-          const boleta = {
-            CodClasificadorExterno: 132416,
-            Descripcion: "Ticket Pac. Nuevo",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 54) {
-          const boleta = {
-            CodClasificadorExterno: 124013,
-            Descripcion: "Duplicado de Tarjeta",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 55) {
-          const boleta = {
-            CodClasificadorExterno: 133411,
-            Descripcion: "Cáncer",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 56) {
-          const boleta = {
-            CodClasificadorExterno: 1334199,
-            Descripcion: "Serv. De Esterelizacion",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 57) {
-          const boleta = {
-            CodClasificadorExterno: 1334199,
-            Descripcion: "Const. Medica",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 58) {
-          const boleta = {
-            CodClasificadorExterno: 133411,
-            Descripcion: "Medicina General",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 59) {
-          const boleta = {
-            CodClasificadorExterno: 131912,
-            Descripcion: "Venta de Bases y Otros",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 60) {
-          const boleta = {
-            CodClasificadorExterno: 133411,
-            Descripcion: "Pediatria",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 61) {
-          const boleta = {
-            CodClasificadorExterno: 133432,
-            Descripcion: "P.P.D.",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-        if (element.IdParametro == 62) {
-          const boleta = {
-            CodClasificadorExterno: 133415,
-            Descripcion: "Anastecia Endovenosa",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          listClasifImpresion.push(boleta)
-        }
-      })
+      }))
       const listCodClasif = [];
-      const listDescripClasif = [];
-      const listImpUniClasif = [];
+      let listImpUniClasif = [];
+      listClasifImpresion.reduce(function(total ,
+        currentValue) {
+        if (!total[currentValue.CodClasificadorExterno]) {
+            let key=currentValue.CodClasificadorExterno
+            total[key] = { id:key,ImporteUnitarioClasificador: 0 };
+            listImpUniClasif.push(total[currentValue.CodClasificadorExterno])
+          }
+          total[currentValue.CodClasificadorExterno].ImporteUnitarioClasificador += currentValue.ImporteUnitarioClasificador;
+          return total;
+        }, {});
+      listImpUniClasif = listImpUniClasif.map(element=>{
+        return element.ImporteUnitarioClasificador.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
+      });
+      console.log(listImpUniClasif)
       listClasifImpresion.map((clasif)=>{
         listCodClasif.push(clasif.CodClasificadorExterno)
-        listDescripClasif.push(clasif.Descripcion)
-        listImpUniClasif.push(clasif.ImporteUnitarioClasificador.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}))
       })
+      //luego filtramos para que no haya codigos repetidos
+      let listCodClasifSinRepetidos =[...new Set(listCodClasif)];
+      let listDescripClasif= await Promise.all(listCodClasifSinRepetidos.map(async(clasif)=>{
+        //consultamos a la api para ver que descripcion tiene ese codigo externo
+        var descrip =await this.ingresosPropios.getDescripcionClasificadoresImpresion(clasif)
+        return await descrip[0].Descripcion;
+      }))
+      console.log(listDescripClasif)
       if(this.valueImpresion==1){
-        this.imprimirMatricial(registro,listCodClasif,listDescripClasif,listImpUniClasif)
+        this.imprimirMatricial(registro,listCodClasifSinRepetidos,listDescripClasif,listImpUniClasif)
       }
       else{
-        this.imprimirPDF(registro,listCodClasif,listDescripClasif,listImpUniClasif)
+        this.imprimirPDF(registro,listCodClasifSinRepetidos,listDescripClasif,listImpUniClasif)
       }
     },
 		guardado(){
@@ -3820,6 +3470,7 @@ export default {
     this.supervisor = new Supervisor();
     this.validarRoles();
     this.ingresosPropios = new IngresosPropios();
+    this.formulario = new Formulario();
     this.login = new Login();
 		this.obtenerRegistros();
 		this.tiposFiltros();

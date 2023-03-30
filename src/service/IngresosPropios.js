@@ -21,5 +21,10 @@ export default class IngresosPropios {
     return await axios 
       .post('/Report/ingpropios/poranio',valueReport).then(d => d.data);
   }
+  
+  async getDescripcionClasificadoresImpresion(codClasificadorExterno) {
+    return await axios 
+      .get('/parametros/clasificadoresagrupados/'+codClasificadorExterno).then(d => d.data);
+  }
 
 }

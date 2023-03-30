@@ -19,7 +19,7 @@ export default class Formulario {
 
   async deleteClasificadorDefinitivamente(id) {
     return await axios 
-      .get('/registros/'+id).then(d => d.data);
+      .delete('/registros/'+id).then(d => d.data);
   }
 
   async getSubtiposIngresosPropios() {
@@ -50,6 +50,11 @@ export default class Formulario {
   async modificarCorrelativo(value) {
     return await axios 
       .put('/correlativo/modificar',value).then(d => d.data);
+  }
+
+  async getDetalleClasificador(idParametro) {
+    return await axios 
+      .get('/parametros/clasificadores/detalle/'+idParametro).then(d => d.data);
   }
 
 }

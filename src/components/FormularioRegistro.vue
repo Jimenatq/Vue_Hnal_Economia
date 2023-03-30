@@ -89,9 +89,12 @@
                   @click="aniadirElemento()" />
               </div>
               <div class="field col-12 md:col-4 alineacion">
+                <label  class="mb-7" for="quantity">Monto de Devolución</label>
                 <label for="email1">Importe total</label>
               </div>
               <div class="field col-12 md:col-3">
+                <InputNumber class="mb-5" id="price" v-model="MontoDevolucion" mode="currency" currency="PEN" locale="es-PE" max="999999" 
+                  @input="MontoDevolucion= $event.value, sumarImportes();"/>
                 <InputNumber id="price" v-model="ImporteTotalBoleta" mode="currency" currency="PEN" disabled
                   locale="es-PE" required="true " :class="{ 'p-invalid': enviar && !ImporteTotalBoleta }" />
                 <small class="p-invalid text-red" v-if="enviar && !ImporteTotalBoleta">Este campo es
@@ -154,7 +157,7 @@
                 <label for="email1">Importe de clasif.</label>
                 <label for="email1">{{ asignarImporteClasificador(clasificador) }}</label>
                 <InputNumber id="price" v-model="clasificador.ImporteUnitarioClasificador" mode="currency" currency="PEN"
-                  locale="es-PE" :class="{ 'p-invalid': enviar && !clasificador.ImporteUnitarioClasificador }" 
+                  locale="es-PE" :class="{ 'p-invalid': enviar && !clasificador.ImporteUnitarioClasificador }" max="99999"
                   @input="clasificador.ImporteUnitarioClasificador= $event.value, sumarImportes();"/>
                 <small class="p-invalid text-red" v-if="enviar && !clasificador.ImporteUnitarioClasificador">Este campo
                   es requerido.</small>
@@ -194,11 +197,11 @@
               </div>
               <div class="field col-12 md:col-6">
                 <label for="state">N° voucher</label>
-                <InputText id="quantity" v-model="NroVoucher" />
+                <InputText id="quantity" v-model="NroVoucher" maxlength="9"/>
               </div>
               <div class="field col-12 md:col-6">
                 <label for="state">Monto voucher</label>
-                <InputNumber id="price" v-model="MontoVoucher" mode="currency" currency="PEN" locale="es-PE" />
+                <InputNumber id="price" v-model="MontoVoucher" mode="currency" currency="PEN" locale="es-PE"  max="99999"/>
               </div>
               <!-- <div class="field col-12 md:col-6">
                 <label for="state">Nombre de Banco</label>
@@ -219,15 +222,15 @@
             <div class="field col-12 grid" v-if="ValueSubtipo.Codigo == 2">
               <div class="field col-12 md:col-6">
                 <label for="state">Nombre de empresa</label>
-                <InputText id="quantity" v-model="NombreEmpresa" />
+                <InputText id="quantity" v-model="NombreEmpresa" maxlength="45"/>
               </div>
               <div class="field col-12 md:col-6">
                 <label for="state">Nota de Informativa</label>
-                <InputText id="quantity" v-model="NotaInformativa" />
+                <InputText id="quantity" v-model="NotaInformativa" maxlength="45"/>
               </div>
               <div class="field col-12 md:col-4">
                 <label for="state">Nombre de Factura</label>
-                <InputText id="quantity" v-model="NombreFactura" />
+                <InputText id="quantity" v-model="NombreFactura" maxlength="35" />
               </div>
               <div class="field col-12 md:col-4">
                 <label for="state">Fecha</label>
@@ -235,35 +238,35 @@
               </div>
               <div class="field col-12 md:col-4">
                 <label for="state">Importe de deposito</label>
-                <InputNumber id="price" v-model="ImporteDeposito" mode="currency" currency="PEN" locale="es-PE" />
+                <InputNumber id="price" v-model="ImporteDeposito" mode="currency" currency="PEN" locale="es-PE" max="99999" />
               </div>
               <div class="field col-12 md:col-6">
                 <label for="state">Importe de ingresos propios</label>
-                <InputNumber id="price" v-model="ImporteTotalTipoIP" mode="currency" currency="PEN" locale="es-PE" />
+                <InputNumber id="price" v-model="ImporteTotalTipoIP" mode="currency" currency="PEN" locale="es-PE" max="99999" />
               </div>
               <div class="field col-12 md:col-6">
                 <label for="state">Importe de Fondos Rotatorios</label>
-                <InputNumber id="price" v-model="ImporteTotalTipoFR" mode="currency" currency="PEN" locale="es-PE" />
+                <InputNumber id="price" v-model="ImporteTotalTipoFR" mode="currency" currency="PEN" locale="es-PE" max="99999" />
               </div>
               <div class="field col-12 md:col-3">
                 <label for="state">N° Voucher</label>
-                <InputText id="quantity" v-model="NroVoucher" />
+                <InputText id="quantity" v-model="NroVoucher" maxlength="9" />
               </div>
               <div class="field col-12 md:col-3">
                 <label for="state">Monto Voucher</label>
-                <InputNumber id="price" v-model="MontoVoucher" mode="currency" currency="PEN" locale="es-PE" />
+                <InputNumber id="price" v-model="MontoVoucher" mode="currency" currency="PEN" locale="es-PE" max="99999"/>
               </div>
               <div class="field col-12 md:col-3">
                 <label for="state">N° Cheque</label>
-                <InputText id="quantity" v-model="NroCheque" />
+                <InputText id="quantity" v-model="NroCheque" maxlength="12"/>
               </div>
               <div class="field col-12 md:col-3">
                 <label for="state">Monto cheque</label>
-                <InputNumber id="price" v-model="MontoCheque" mode="currency" currency="PEN" locale="es-PE" />
+                <InputNumber id="price" v-model="MontoCheque" mode="currency" currency="PEN" locale="es-PE" max="99999" />
               </div>
               <div class="field col-12">
                 <label for="state">Nombre de Banco</label>
-                <InputText id="quantity" v-model="NombreBanco" />
+                <InputText id="quantity" v-model="NombreBanco" maxlength="45" />
                 <label for="state">FARMACIA HOSPITAL ARZOBISPO LOAYZA</label>
               </div>
               <div class="field col-12 md:col-8"></div>
@@ -277,15 +280,15 @@
             <div class="field col-12 grid" v-if="ValueSubtipo.Codigo == 3">
               <div class="field col-12 md:col-6">
                 <label for="state">Nombre de empresa</label>
-                <InputText id="quantity" v-model="NombreEmpresa" />
+                <InputText id="quantity" v-model="NombreEmpresa" maxlength="45" />
               </div>
               <div class="field col-12 md:col-6">
                 <label for="state">Nota de Informativa</label>
-                <InputText id="quantity" v-model="NotaInformativa" />
+                <InputText id="quantity" v-model="NotaInformativa" maxlength="45" />
               </div>
               <div class="field col-12 md:col-5">
                 <label for="state">Nombre de Factura</label>
-                <InputText id="quantity" v-model="NombreFactura" />
+                <InputText id="quantity" v-model="NombreFactura" maxlength="35" />
               </div>
               <div class="field col-12 md:col-4">
                 <label for="state">Fecha</label>
@@ -293,23 +296,23 @@
               </div>
               <div class="field col-12 md:col-3">
                 <label for="state">Importe de deposito</label>
-                <InputNumber id="price" v-model="ImporteDeposito" mode="currency" currency="PEN" locale="es-PE" />
+                <InputNumber id="price" v-model="ImporteDeposito" mode="currency" currency="PEN" locale="es-PE" max="99999"/>
               </div>
               <div class="field col-12 md:col-3">
                 <label for="state">Importe de ingresos propios</label>
-                <InputNumber id="price" v-model="ImporteTotalTipoIP" mode="currency" currency="PEN" locale="es-PE" />
+                <InputNumber id="price" v-model="ImporteTotalTipoIP" mode="currency" currency="PEN" locale="es-PE" max="99999" />
               </div>
               <div class="field col-12 md:col-3">
                 <label for="state">Importe de Fondos Rotatorios</label>
-                <InputNumber id="price" v-model="ImporteTotalTipoFR" mode="currency" currency="PEN" locale="es-PE" />
+                <InputNumber id="price" v-model="ImporteTotalTipoFR" mode="currency" currency="PEN" locale="es-PE" max="99999" />
               </div>
               <div class="field col-12 md:col-3">
                 <label for="state">N° Nota de Abono</label>
-                <InputText id="quantity" v-model="NroNotaAbono" />
+                <InputText id="quantity" v-model="NroNotaAbono" maxlength="12" />
               </div>
               <div class="field col-12 md:col-3">
                 <label for="state">Monto de Nota de Abono</label>
-                <InputNumber id="price" v-model="MontoNotaAbono" mode="currency" currency="PEN" locale="es-PE" />
+                <InputNumber id="price" v-model="MontoNotaAbono" mode="currency" currency="PEN" locale="es-PE" max="99999" />
               </div>
               <div class="field col-12">
                 <label for="state">FARMACIA HOSPITAL ARZOBISPO LOAYZA</label>
@@ -325,10 +328,10 @@
             <div class="field col-12 grid" v-if="ValueSubtipo.Codigo == 4">
               <div class="field col-12">
                 <label for="state">Texto adicional</label>
-                <Textarea v-model="TextoGlosa" placeholder="Ingrese texto adicional para la glosa" :autoResize="true"
+                <Textarea v-model="TextoGlosa" placeholder="Ingrese texto adicional para la glosa" autoResize
                   rows="3" cols="30" />
-                <label for="state">FARMACIA HOSPITAL ARZOBISPO LOAYZA</label>
-              </div>
+                  <label for="state">FARMACIA HOSPITAL ARZOBISPO LOAYZA</label>
+                </div>
               <div class="field col-12 md:col-8"></div>
               <div v-if="this.editar.modoEditar" class="field col-12 md:col-4">
                 <Button label="Modificar registro" class="p-button-success mt-3 mr-2 mb-2" @click="editarRegistro()" />
@@ -358,20 +361,20 @@
               </div>
               <div class="field col-12 md:col-3">
                 <label for="state">Monto Voucher</label>
-                <InputNumber id="price" v-model="MontoVoucher" mode="currency" currency="PEN" locale="es-PE" max="3"/>
+                <InputNumber id="price" v-model="MontoVoucher" mode="currency" currency="PEN" locale="es-PE" maxlength="9"/>
               </div>
               <div class="field col-12 md:col-3">
                 <label for="state">N° Cheque</label>
-                <InputText id="quantity" v-model="NroCheque" />
+                <InputText id="quantity" v-model="NroCheque" maxlength="12"/>
               </div>
               <div class="field col-12 md:col-3">
                 <label for="state">Monto cheque</label>
-                <InputNumber id="price" v-model="MontoCheque" mode="currency" currency="PEN" locale="es-PE" />
+                <InputNumber id="price" v-model="MontoCheque" mode="currency" currency="PEN" locale="es-PE" max="99999"/>
               </div>
               <div class="field col-12">
                 <label for="state">BANCO DE LA NACIÓN</label><BR />
                 <label for="state">N° de Cuota</label>
-                <InputText id="quantity" v-model="NombreBanco" />
+                <InputText id="quantity" v-model="NombreBanco" maxlength="30"/>
                 <label for="state">FARMACIA HOSPITAL ARZOBISPO LOAYZA</label>
               </div>
               <div class="field col-12 md:col-8"></div>
@@ -520,6 +523,7 @@ export default {
       ImporteTotalBoleta: null,
       Igv: 18,
       MontoIgv: null,
+      MontoDevolucion: null,
       NombreEmpresa: null,
       NotaInformativa: null,
       NombreFactura: null,
@@ -679,7 +683,7 @@ export default {
       this.formulario.deleteClasificadorDefinitivamente(value.IdBoleta)
         .then(async(data)=>{
           this.listaBoletaFormulario.splice(this.id, 1);
-          await this.actualizar.obtenerRegistros();
+          await this.sumarImportes();
           const modifImporte ={
             IdRegistro: this.title.registro.IdRegistro,
             ImporteTotalBoleta: this.ImporteTotalBoleta
@@ -691,18 +695,18 @@ export default {
             this.mensajeDialog = true;
           })
           .catch(error=>{
-            this.message = error + ". Ha ocurrido un error, actualice la pág por favor.";
+            this.message = error + ". Ha ocurrido un error, no se actualizó el importe.";
             this.mensajeDialog = true;
           })
         })
         .catch(error=>{
-          this.message = error+ ". Ha ocurrido un error, actualice la pág por favor.";
+          this.message = error+ ". Ha ocurrido un error, no se ha eliminado el clasificador, intente de nuevo.";
           this.mensajeDialog = true;
         })
     },
     calcularMontoIgv() {
       if (this.ImporteTotalBoleta != 0 && this.Igv != undefined) {
-        this.MontoIgv = (this.ImporteTotalBoleta * this.Igv / 100).toFixed(2);
+        this.MontoIgv = ((this.ImporteTotalBoleta/1.18) * this.Igv / 100).toFixed(2);
         this.MontoIgv = this.MontoIgv.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
       }
     },
@@ -721,11 +725,19 @@ export default {
         alert("No puede eliminar cuando solo hay un clasificador")
       }
     },
-    sumarImportes() {
+    async sumarImportes() {
       this.ImporteTotalBoleta = 0;
-      this.listaBoletaFormulario.forEach(element => {
-        this.ImporteTotalBoleta += element.ImporteUnitarioClasificador;
-      });
+      if(this.MontoDevolucion){
+        this.listaBoletaFormulario.forEach(element => {
+          this.ImporteTotalBoleta += element.ImporteUnitarioClasificador;
+        });
+        this.ImporteTotalBoleta -= this.MontoDevolucion;
+      }
+      else{
+        this.listaBoletaFormulario.forEach(element => {
+          this.ImporteTotalBoleta += element.ImporteUnitarioClasificador;
+        });
+      }
     },
     aniadirElemento() {
       const clasificador = {
@@ -868,6 +880,7 @@ export default {
               ImporteTotalBoleta: this.ImporteTotalBoleta,
               Igv: this.Igv,
               MontoIgv: this.MontoIgv,
+              MontoDevolucion: this.MontoDevolucion,
               NombreEmpresa: this.NombreEmpresa,
               NotaInformativa: this.NotaInformativa,
               NombreFactura: this.NombreFactura,
@@ -958,6 +971,7 @@ export default {
               ImporteTotalBoleta: this.ImporteTotalBoleta,
               Igv: this.Igv,
               MontoIgv: this.MontoIgv,
+              MontoDevolucion: this.MontoDevolucion,
               NombreEmpresa: this.NombreEmpresa,
               NotaInformativa: this.NotaInformativa,
               NombreFactura: this.NombreFactura,
@@ -1168,6 +1182,7 @@ export default {
         ImporteTotalBoleta: this.ImporteTotalBoleta,
         Igv: this.Igv,
         MontoIgv: this.MontoIgv,
+        MontoDevolucion: this.MontoDevolucion,
         NombreEmpresa: this.NombreEmpresa,
         NotaInformativa: this.NotaInformativa,
         NombreFactura: this.NombreFactura,
@@ -1237,6 +1252,9 @@ export default {
         }
         if (this.ValueSubtipo.IdParametro == 14) {
           this.exportMatricialFR4();
+        }
+        if (this.ValueSubtipo.IdParametro == 63) {
+          this.exportMatricialFR5();
         }
       }
     },
@@ -3906,111 +3924,356 @@ export default {
         pdfMake.createPdf(docDefinition).print();
       }
     },
-  },
-  created: function () {
-    this.login = new Login();
-    this.supervisor = new Supervisor();
-    this.formulario = new Formulario();
-    this.obtenerClasificadores();
-    this.obtenerRegistros();
-    this.TipoRegistro=[this.valorTipo.valorTipo]
-    this.ValueTipo=this.valorTipo.valorTipo
-    this.obtenerSubtiposIP();
-    this.obtenerSubtiposFR();
-    
-    // this.obtenerCorrelativo();
-    axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
-    if (this.editar.modoEditar) {
-      if (this.title.registro.IdParametroSubtipo == 3) {
-        this.ValueSubtipo = {
-          IdParametro: 3,
-          Codigo: 1,
-          Descripcion: "Recaudación"
+    exportMatricialFR5(){
+      let docDefinition = {
+          pageSize: {
+            width: 630,
+            height: 800
+          },
+          defaultStyle: {
+            fontSize: 10,
+            bold: true
+          },
+          pageMargins: [ 11, 13, 10, 1 ],
+          info: {
+            title: this.ValueTipo.Descripcion + "-N°" + this.NroRecibo,
+          },
+          content: [
+            {
+              text: "\n\n\n\n\n\n"
+            },
+            {
+              columns: [
+                {
+                  width: 126,
+                  text: " "
+                },
+                {
+                  width: 318,
+                  text: this.ValueTipo.Descripcion,
+                  alignment: "center",
+                },
+                {
+                  columns:[
+                    { 
+                      width: 43,
+                      fontSize: 9,
+                      text: this.NroRecibo, alignment: "center"
+                    },
+                    { 
+                      width: 30,
+                      fontSize: 9,
+                      text: this.dia, alignment: "center"
+                    },
+                    { 
+                      width: 26,
+                      fontSize: 9,
+                      text: this.mes, alignment: "center"
+                    },
+                    { 
+                      width: 27,
+                      fontSize: 9,
+                      text: this.anio, alignment: "center"
+                    }
+                  ]
+                },
+              ]
+            },
+            { text: "\n\n\n\n\n\n" },
+            {
+              columns: [
+                { 
+                  width: 100,
+                  text: this.listaBoletaFormulario[0].Codigo.Codigo
+                },
+                {
+                  width: 305,
+                  text: " "
+                },
+                {
+                  width: 60,
+                  text: " "
+                },
+                {
+                  width: 80,
+                  text: this.ImporteTotalBoleta.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+                  alignment: "right"
+                }
+              ],
+            },
+            { text: "\n" },
+            {
+              columns: [
+              { 
+                  width: 100,
+                  text: " "
+                },
+                {
+                  width: 305,
+                  text: this.listaBoletaFormulario[0].Codigo.CodClasificadorExterno
+                  + "          " +
+                  this.listaBoletaFormulario[0].Codigo.Descripcion
+                  + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+                },
+                {
+                  width: 60,
+                  text: this.ImporteUnitarioClasificador.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+                  alignment: "right"
+                },
+                {
+                  width: 80,
+                  text: " "
+                }
+              ]
+            },
+            {
+              columns: [
+                {
+                  width: 60,
+                  text: " "
+                },
+                {
+                  width: 310,
+                  text: "COMPROMISO DEL TRABAJADOR CARLOS HERRERA"+"\n" + this.NotaInformativa + "\n"
+                }
+              ]
+            },
+            {
+              columns: [
+                {
+                  width: 60,
+                  text: " "
+                },
+                {
+                  width: 310,
+                  columns: [
+                    {
+                      width: 195,
+                      text: "ACTA DE COMPROMISO SIN/N°"
+                    },
+                    {
+                      width: 13,
+                      text: "S/."
+                    },
+                    {
+                      width: 55,
+                      text: "4,476.34",
+                      alignment: "right"
+                    },
+                    {
+                      width: "*",
+                      text: " "
+                    }
+                  ],
+                }
+              ]
+            },
+            {
+              columns: [
+                {
+                  width: 60,
+                  text: " "
+                },
+                {
+                  width: 310,
+                  columns: [
+                    {
+                      width: 130,
+                      text: "VOUCHER N° "+ this.NroVoucher
+                    },
+                    {
+                      width: 65,
+                      text: "MONTO",
+                      alignment: "center"
+                    },
+                    {
+                      width: 13,
+                      text: "S/."
+                    },
+                    {
+                      width: 55,
+                      text: this.MontoVoucher.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+                      alignment: "right"
+                    },
+                    {
+                      width: "*",
+                      text: " "
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              columns: [
+                {
+                  width: 60,
+                  text: " "
+                },
+                {
+                  width: 310,
+                  columns: [
+                    {
+                      width: 130,
+                      text: "CH/N° "+ this.NroCheque
+                    },
+                    {
+                      width: 65,
+                      text: "MONTO",
+                      alignment: "center"
+                    },
+                    {
+                      width: 13,
+                      text: "S/."
+                    },
+                    {
+                      width: 55,
+                      text: this.MontoCheque.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+                      alignment: "right"
+                    },
+                    {
+                      width: "*",
+                      text: " "
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              columns: [
+                {
+                  width: 60,
+                  text: " "
+                },
+                {
+                  width: 310,
+                  text: "BANCO DE LA NACIÓN\n"+this.NombreBanco+"\n"+
+                        "FARMACIA HOSPITAL ARZOBISPO LOAYZA"
+                }
+              ]
+            },
+            { text: "\n\n" },
+            {
+              columns: [
+                {
+                  width: 55,
+                  text: " "
+                },
+                { 
+                  width: "*",
+                  text: 
+                    "Base Imponible: 	S/." +
+                    (this.ImporteTotalBoleta -this.MontoIgv).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) 
+                    + "            IGV  " + 
+                    this.Igv + "%:    " + " S/." + this.MontoIgv.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+                },
+                {
+                  width: 100,
+                  text: this.ImporteTotalBoleta.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+                  alignment: "right"
+                },
+                {
+                  width: 60,
+                  text: " "
+                }
+              ],
+            },
+            { text: "\n\n\n\n\n" },
+            {
+              columns: [
+                { 
+                  width: 5,
+                  text: " "
+                },
+                { text: "81       82" }
+              ]
+            },
+            { text: "\n\n\n\n\n\n\n\n\n" },
+            {
+              columns: [
+                { 
+                  width: 70,
+                  text: "11010101" 
+                },
+                { 
+                  width: 90,
+                  text: "CAJA MN" 
+                },
+                { 
+                  width: 70,
+                  text: (this.ImporteTotalBoleta -this.MontoIgv).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+                  alignment: "right"
+                },
+                { 
+                  width: "*",
+                  text: " ",
+                },
+              ]
+            },
+            {
+              columns: [
+                { 
+                  width: 70,
+                  text: "2101010501" 
+                },
+                { 
+                  width: 90,
+                  text: "IGV CTA. PROPIA" 
+                },
+                { 
+                  width: 70,
+                  text: this.MontoIgv.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+                  alignment: "right"
+                },
+                { 
+                  width: "*",
+                  text: " ",
+                },
+              ]
+            },
+            {
+              columns: [
+                {
+                  width: 70,
+                  text: "12010301" 
+                },
+                { 
+                  width: 90,
+                  text: "VTA. DE BIENES" 
+                },
+                { 
+                  width: 70,
+                  text: " "
+                },
+                { 
+                  width: 70,
+                  text: this.ImporteTotalBoleta.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+                  alignment: "right"
+                },
+                { 
+                  width: "*",
+                  text: " ",
+                },
+              ]
+            }
+          ]
         }
-      }
-      if (this.title.registro.IdParametroSubtipo == 4) {
+      pdfMake.createPdf(docDefinition).print();
+    },
+    async formularioEditar(){
+      if (this.editar.modoEditar) {
+        var detalleSubtipo = await this.formulario.getDetalleClasificador(this.title.registro.IdParametroSubtipo)
         this.ValueSubtipo = {
-          IdParametro: 4,
-          Codigo: 2,
-          Descripcion: "Penalidad"
+          IdParametro: detalleSubtipo[0].IdParametro,
+          Codigo: detalleSubtipo[0].Codigo,
+          Descripcion: detalleSubtipo[0].Descripcion
         }
-      }
-      if (this.title.registro.IdParametroSubtipo == 5) {
-        this.ValueSubtipo = {
-          IdParametro: 5,
-          Codigo: 3,
-          Descripcion: "Factura"
-        }
-      }
-      if (this.title.registro.IdParametroSubtipo == 6) {
-        this.ValueSubtipo = {
-          IdParametro: 6,
-          Codigo: 4,
-          Descripcion: "Protocolo"
-        }
-      }
-      if (this.title.registro.IdParametroSubtipo == 7) {
-        this.ValueSubtipo = {
-          IdParametro: 7,
-          Codigo: 5,
-          Descripcion: "Detracción"
-        }
-      }
-      if (this.title.registro.IdParametroSubtipo == 8) {
-        this.ValueSubtipo = {
-          IdParametro: 8,
-          Codigo: 6,
-          Descripcion: "Otros servicios"
-        }
-      }
-      if (this.title.registro.IdParametroSubtipo == 9) {
-        this.ValueSubtipo = {
-          IdParametro: 9,
-          Codigo: 7,
-          Descripcion: "Otros ingresos"
-        }
-      }
-      if (this.title.registro.IdParametroSubtipo == 10) {
-        this.ValueSubtipo = {
-          IdParametro: 10,
-          Codigo: 8,
-          Descripcion: "Ingresos diversos"
-        }
-      }
-      if (this.title.registro.IdParametroSubtipo == 11) {
-        this.ValueSubtipo = {
-          IdParametro: 11,
-          Codigo: 1,
-          Descripcion: "Recaudación por efectivo de caja"
-        }
-      }
-      if (this.title.registro.IdParametroSubtipo == 12) {
-        this.ValueSubtipo = {
-          IdParametro: 12,
-          Codigo: 2,
-          Descripcion: "Pago de facturas - Cheque"
-        }
-      }
-      if (this.title.registro.IdParametroSubtipo == 13) {
-        this.ValueSubtipo = {
-          IdParametro: 13,
-          Codigo: 3,
-          Descripcion: "Pago de facturas - Nota de Abono"
-        }
-      }
-      if (this.title.registro.IdParametroSubtipo == 14) {
-        this.ValueSubtipo = {
-          IdParametro: 14,
-          Codigo: 4,
-          Descripcion: "Otros pagos"
-        }
-      }
-      this.IdRegistro = this.title.registro.IdRegistro,
+        this.IdRegistro = this.title.registro.IdRegistro,
         this.NroRecibo = this.title.registro.NroRecibo,
         this.Fecha = new Date (this.title.registro.Fecha),
         this.ImporteTotalBoleta = this.title.registro.ImporteTotalBoleta,
         this.Igv = this.title.registro.Igv,
         this.MontoIgv = this.title.registro.MontoIgv,
+        this.MontoDevolucion= this.title.registro.MontoDevolucion,
         this.NombreEmpresa = this.title.registro.NombreEmpresa,
         this.NotaInformativa = this.title.registro.NotaInformativa,
         this.NombreFactura = this.title.registro.NombreFactura;
@@ -4035,685 +4298,38 @@ export default {
         this.FechaCreacion = this.title.registro.FechaCreacion,
         this.UsuarioModificacion = this.$store.state.userName,
         this.FechaModificacion = new Date(),
-        this.Anulado = this.title.registro.Anulado,
-      this.title.registro.listBoletas.forEach((element) => {
-        if (element.IdParametro == 15) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: 12010301,
-              CodClasificadorArea: 90101.00,
-              CodClasificadorExterno: 131612,
-            },
-            Descripcion: "Medicina",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
+        this.Anulado = this.title.registro.Anulado
+        this.listaBoletaFormulario =await Promise.all(this.title.registro.listBoletas.map(async (element) => {
+        var detalle = await this.formulario.getDetalleClasificador(element.IdParametro)
+        return {
+          IdBoleta: element.IdBoleta,
+          IdParametro: element.IdParametro,
+          Codigo: {
+            Codigo: detalle[0].Codigo,
+            CodClasificadorArea: detalle[0].CodClasificadorArea,
+            CodClasificadorExterno: detalle[0].CodClasificadorExterno,
+          },
+          Descripcion: detalle[0].Descripcion,
+          ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
         }
-        if (element.IdParametro == 16) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 101.00,
-              CodClasificadorExterno: 133415,
-            },
-            Descripcion: "Cirugia Especialidades",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 17) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 101.10,
-              CodClasificadorExterno: 133415,
-            },
-            Descripcion: "Cardio Vascular",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 18) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 101.20,
-              CodClasificadorExterno: 133415,
-            },
-            Descripcion: "Cabeza - Cuello",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 19) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 101.30,
-              CodClasificadorExterno: 133415,
-            },
-            Descripcion: "Colproctologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 20) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 101.4,
-              CodClasificadorExterno: 133415,
-            },
-            Descripcion: "Oftalmologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 21) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 101.50,
-              CodClasificadorExterno: null,
-            },
-            Descripcion: "Otorrinolaringologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 22) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 101.19,
-              CodClasificadorExterno: 133425,
-            },
-            Descripcion: "Audiometria",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 23) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 101.60,
-              CodClasificadorExterno: 133415,
-            },
-            Descripcion: "Quemados",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 24) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 101.70,
-              CodClasificadorExterno: 133415,
-            },
-            Descripcion: "Traumatologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 25) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 101.80,
-              CodClasificadorExterno: 133415,
-            },
-            Descripcion: "Urologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 26) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 101.90,
-              CodClasificadorExterno: 133415,
-            },
-            Descripcion: "Neurocirugia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 27) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 102.00,
-              CodClasificadorExterno: 133415,
-            },
-            Descripcion: "Cirugia General",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 28) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 103.20,
-              CodClasificadorExterno: 133415,
-            },
-            Descripcion: "Ginecologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 29) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 104.02,
-              CodClasificadorExterno: 133416,
-            },
-            Descripcion: "Inmunoreumatologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 30) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 104.10,
-              CodClasificadorExterno: 133416,
-            },
-            Descripcion: "Angiologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 31) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 104.20,
-              CodClasificadorExterno: 133416,
-            },
-            Descripcion: "Cardiologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 32) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 104.01,
-              CodClasificadorExterno: 133423,
-            },
-            Descripcion: "Electrocardiograma",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 33) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 104.30,
-              CodClasificadorExterno: 133416,
-            },
-            Descripcion: "Dermatologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 34) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 104.40,
-              CodClasificadorExterno: 133416,
-            },
-            Descripcion: "Endocrinologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 35) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 104.50,
-              CodClasificadorExterno: 133416,
-            },
-            Descripcion: "Gastroenterologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 36) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 104.60,
-              CodClasificadorExterno: 133416,
-            },
-            Descripcion: "Nefrologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 37) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 104.70,
-              CodClasificadorExterno: 133411,
-            },
-            Descripcion: "Neumologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 38) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 104.80,
-              CodClasificadorExterno: 133411,
-            },
-            Descripcion: "Psicologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 39) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 104.81,
-              CodClasificadorExterno: 133411,
-            },
-            Descripcion: "Psiquiatria",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 40) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 104.90,
-              CodClasificadorExterno: 133431,
-            },
-            Descripcion: "Serv. Top. Y Rehab.",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 41) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 104.92,
-              CodClasificadorExterno: 133411,
-            },
-            Descripcion: "Neurologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 42) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 107.00,
-              CodClasificadorExterno: 133412,
-            },
-            Descripcion: "Odontoestamologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 43) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 108.50,
-              CodClasificadorExterno: 133416,
-            },
-            Descripcion: "Unidad de Cuidados Inten.",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 44) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 201.00,
-              CodClasificadorExterno: 133421,
-            },
-            Descripcion: "Anatomia Patologia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 45) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 202.00,
-              CodClasificadorExterno: 133421,
-            },
-            Descripcion: "Laboratorio Clinico",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 46) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 302.01,
-              CodClasificadorExterno: 133411,
-            },
-            Descripcion: "Ticket Pac. Antiguo",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 47) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 203.10,
-              CodClasificadorExterno: 133424,
-            },
-            Descripcion: "Ecografia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 48) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 203.20,
-              CodClasificadorExterno: 133424,
-            },
-            Descripcion: "Radiografia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 49) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 204.10,
-              CodClasificadorExterno: 133424,
-            },
-            Descripcion: "Medicina Nuclear",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 50) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 301.00,
-              CodClasificadorExterno: 133414,
-            },
-            Descripcion: "Atenc. Emergencia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 51) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 303.00,
-              CodClasificadorExterno: 133416,
-            },
-            Descripcion: "Hospitalizacion",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 52) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 401.00,
-              CodClasificadorExterno: 1334399,
-            },
-            Descripcion: "Transp. Ambulancia",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 53) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 302.02,
-              CodClasificadorExterno: 132416,
-            },
-            Descripcion: "Ticket Pac. Nuevo",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 54) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 302.03,
-              CodClasificadorExterno: 124013,
-            },
-            Descripcion: "Duplicado de Tarjeta",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 55) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 402.00,
-              CodClasificadorExterno: 133411,
-            },
-            Descripcion: "Cáncer",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 56) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 400.07,
-              CodClasificadorExterno: 1334199,
-            },
-            Descripcion: "Serv. De Esterelizacion",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 57) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 400.01,
-              CodClasificadorExterno: 1334199,
-            },
-            Descripcion: "Const. Medica",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 58) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 105.00,
-              CodClasificadorExterno: 133411,
-            },
-            Descripcion: "Medicina General",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 59) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 400.21,
-              CodClasificadorExterno: 131912,
-            },
-            Descripcion: "Venta de Bases y Otros",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 60) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 106.00,
-              CodClasificadorExterno: 133411,
-            },
-            Descripcion: "Pediatria",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 61) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 205.00,
-              CodClasificadorExterno: 133432,
-            },
-            Descripcion: "P.P.D.",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-        if (element.IdParametro == 62) {
-          const Codigo = {
-            IdBoleta: element.IdBoleta,
-            IdParametro: element.IdParametro,
-            Codigo: {
-              Codigo: null,
-              CodClasificadorArea: 207.00,
-              CodClasificadorExterno: 133415,
-            },
-            Descripcion: "Anastecia Endovenosa",
-            ImporteUnitarioClasificador: element.ImporteUnitarioClasificador
-          }
-          this.listaBoletaConvertida.push(Codigo)
-        }
-      });
-      this.listaBoletaFormulario = this.listaBoletaConvertida
+      }))
+      }
     }
-      //debe estar despues de asignar los valores de arriba
-      this.cambioTipo();
+  },
+  created: function () {
+    this.login = new Login();
+    this.supervisor = new Supervisor();
+    this.formulario = new Formulario();
+    this.obtenerClasificadores();
+    this.obtenerRegistros();
+    this.TipoRegistro=[this.valorTipo.valorTipo]
+    this.ValueTipo=this.valorTipo.valorTipo
+    this.obtenerSubtiposIP();
+    this.obtenerSubtiposFR();
+    this.formularioEditar();
+    // this.obtenerCorrelativo();
+    axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+    this.cambioTipo();
   },
 }
 </script>

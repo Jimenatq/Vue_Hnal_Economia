@@ -1102,6 +1102,25 @@ export default {
                   }
                   listData.push(data)
                 }
+                if(element.IdParametroSubtipo==63){
+                  const data={
+                    NroRecibo: element.NroRecibo,
+                    Fecha: element.Fecha.slice(0,10),
+                    Bruto: element.ImporteTotalBoleta,
+                    Igv: element.Igv,
+                    ImpIGV: element.MontoIgv,
+                    ValorVenta: (element.ImporteTotalBoleta-element.MontoIgv),
+                    Subtipo: "Acta de Compromiso",
+                    Anulado: element.Anulado,
+                    MotivoAnulacion: element.MotivoAnulacion,
+                    FechaAnulacion: element.FechaAnulacion,
+                    AnuladoPor: element.UsuarioAnulacion,
+                    MotivoActivacion: element.MotivoActivacion,
+                    FechaActivacion: element.FechaActivacion,
+                    ActivadoPor: element.UsuarioActivacion
+                  }
+                  listData.push(data)
+                }
               })
               const data = listData;
               const fileName = "fondo-rotatorio";
@@ -1121,7 +1140,7 @@ export default {
 			if (registro.NroVoucher) {
 				let docDefinition = {
 					info: {
-						title: "Fondos Rotatorios" + "-N°" + registro.NroRecibo,
+						title: "Fondo Rotatorio" + "-N°" + registro.NroRecibo,
 					},
 					defaultStyle: {
 						fontSize: 10,
@@ -1355,7 +1374,7 @@ export default {
 									["81", "82"],
 									],
 								},
-								},
+                                },
 								{
 								stack: [
 									{
@@ -1367,23 +1386,23 @@ export default {
 										[{ text: " ", alignment: "center" }],
 										[
 											{
-											text: "(1) DIRECTOR DE PRESUPUESTO Y CONTABILIDAD\n(SELLO Y FIRMA)",
-											alignment: "center",
-											},
-										],
-										[{ text: " ", alignment: "center" }],
-										[
-											{
-											text: "(2) RECEPCIONISTA DEL DEPOSITO\n(SELLO Y FIRMA)",
-											alignment: "center",
-											},
-										],
-										],
-									},
-									},
-								],
-								},
-							],
+                                  text: "(1) JEFE DE LA OFICINA DE ECONOMÍA\n(SELLO Y FIRMA)",
+                                  alignment: "center",
+                                },
+                              ],
+                              [{ text: " ", alignment: "center" }],
+                              [
+                                {
+                                  text: "(2) CAJA GENERAL\n(SELLO Y FIRMA)",
+                                  alignment: "center",
+                                },
+                              ],
+                            ],
+                          },
+                        },
+                      ],
+                    },
+                  ],
 							],
 						},
 						},
@@ -1397,7 +1416,7 @@ export default {
 			else{
 				let docDefinition = {
 					info: {
-						title: "Fondos Rotatorios" + "-N°" + registro.NroRecibo,
+						title: "Fondo Rotatorio" + "-N°" + registro.NroRecibo,
 					},
 					defaultStyle: {
 						fontSize: 10,
@@ -1643,14 +1662,14 @@ export default {
 										[{ text: " ", alignment: "center" }],
 										[
 											{
-											text: "(1) DIRECTOR DE PRESUPUESTO Y CONTABILIDAD\n(SELLO Y FIRMA)",
+											text: "(1) JEFE DE LA OFICINA DE ECONOMÍA\n(SELLO Y FIRMA)",
 											alignment: "center",
 											},
 										],
 										[{ text: " ", alignment: "center" }],
 										[
 											{
-											text: "(2) RECEPCIONISTA DEL DEPOSITO\n(SELLO Y FIRMA)",
+											text: "(2) CAJA GENERAL\n(SELLO Y FIRMA)",
 											alignment: "center",
 											},
 										],
@@ -1674,7 +1693,7 @@ export default {
     ExportPDFFR2(registro){
       let docDefinition = {
 					info: {
-						title: "Fondos Rotatorios" + "-N°" + registro.NroRecibo,
+						title: "Fondo Rotatorio" + "-N°" + registro.NroRecibo,
 					},
 					defaultStyle: {
 						fontSize: 10,
@@ -1803,13 +1822,13 @@ export default {
                     text: registro.NombreEmpresa
                   },
                   {
-                    text: registro.NotaInformativa
+                    text: "NOTA INF "+registro.NotaInformativa
                   },
                   {
                     columns:[
                       { 
                         width: 130,
-                        text: registro.NombreFactura
+                        text: "FACT. "+registro.NombreFactura
                       },
                       { 
                         width: 60,
@@ -2041,14 +2060,14 @@ export default {
 										[{ text: " ", alignment: "center" }],
 										[
 											{
-											text: "(1) DIRECTOR DE PRESUPUESTO Y CONTABILIDAD\n(SELLO Y FIRMA)",
+											text: "(1) JEFE DE LA OFICINA DE ECONOMÍA\n(SELLO Y FIRMA)",
 											alignment: "center",
 											},
 										],
 										[{ text: " ", alignment: "center" }],
 										[
 											{
-											text: "(2) RECEPCIONISTA DEL DEPOSITO\n(SELLO Y FIRMA)",
+											text: "(2) CAJA GENERAL\n(SELLO Y FIRMA)",
 											alignment: "center",
 											},
 										],
@@ -2071,7 +2090,7 @@ export default {
     ExportPDFFR3(registro){
       let docDefinition = {
 					info: {
-						title: "Fondos Rotatorios" + "-N°" + registro.NroRecibo,
+						title: "Fondo Rotatorio" + "-N°" + registro.NroRecibo,
 					},
 					defaultStyle: {
 						fontSize: 10,
@@ -2200,13 +2219,13 @@ export default {
                     text: registro.NombreEmpresa
                   },
                   {
-                    text: registro.NotaInformativa
+                    text: "NOTA INF "+registro.NotaInformativa
                   },
                   {
                     columns:[
                       { 
                         width: 130,
-                        text: registro.NombreFactura
+                        text: "FACT. "+registro.NombreFactura
                       },
                       { 
                         width: 60,
@@ -2415,14 +2434,14 @@ export default {
 										[{ text: " ", alignment: "center" }],
 										[
 											{
-											text: "(1) DIRECTOR DE PRESUPUESTO Y CONTABILIDAD\n(SELLO Y FIRMA)",
+											text: "(1) JEFE DE LA OFICINA DE ECONOMÍA\n(SELLO Y FIRMA)",
 											alignment: "center",
 											},
 										],
 										[{ text: " ", alignment: "center" }],
 										[
 											{
-											text: "(2) RECEPCIONISTA DEL DEPOSITO\n(SELLO Y FIRMA)",
+											text: "(2) CAJA GENERAL\n(SELLO Y FIRMA)",
 											alignment: "center",
 											},
 										],
@@ -2445,7 +2464,7 @@ export default {
     ExportPDFFR4(registro){
       let docDefinition = {
 					info: {
-						title: "Fondos Rotatorios" + "-N°" + registro.NroRecibo,
+						title: "Fondo Rotatorio" + "-N°" + registro.NroRecibo,
 					},
 					defaultStyle: {
 						fontSize: 10,
@@ -2691,14 +2710,14 @@ export default {
 										[{ text: " ", alignment: "center" }],
 										[
 											{
-											text: "(1) DIRECTOR DE PRESUPUESTO Y CONTABILIDAD\n(SELLO Y FIRMA)",
+											text: "(1) JEFE DE LA OFICINA DE ECONOMÍA\n(SELLO Y FIRMA)",
 											alignment: "center",
 											},
 										],
 										[{ text: " ", alignment: "center" }],
 										[
 											{
-											text: "(2) RECEPCIONISTA DEL DEPOSITO\n(SELLO Y FIRMA)",
+											text: "(2) CAJA GENERAL\n(SELLO Y FIRMA)",
 											alignment: "center",
 											},
 										],
@@ -2740,6 +2759,9 @@ export default {
 				if (registro.IdParametroSubtipo == 14) {
 					this.ExportMatricialFR4(registro);
 				}
+        if (registro.IdParametroSubtipo == 63) {
+					this.ExportMatricialFR5(registro);
+				}
 			}
 			else{
 				if (registro.IdParametroSubtipo == 11) {
@@ -2753,6 +2775,9 @@ export default {
 				}
 				if (registro.IdParametroSubtipo == 14) {
 					this.ExportPDFFR4(registro);
+				}
+        if (registro.IdParametroSubtipo == 63) {
+					this.ExportPDFFR5(registro);
 				}
 			}
     },
@@ -3351,7 +3376,7 @@ export default {
 						},
 						{
 						width: 310,
-						text: registro.NombreEmpresa + "\n" + registro.NotaInformativa + "\n"
+						text: registro.NombreEmpresa + "\n" + "NOTA INF "+registro.NotaInformativa + "\n"
 						}
 					]
 					},
@@ -3366,7 +3391,7 @@ export default {
 						columns: [
 							{
 							width: 130,
-							text: registro.NombreFactura
+							text: "FACT. "+registro.NombreFactura
 							},
 							{
 							width: 65,
@@ -3772,7 +3797,7 @@ export default {
 					},
 					{
 						width: 310,
-						text: registro.NombreEmpresa + "\n" + registro.NotaInformativa + "\n"
+						text: registro.NombreEmpresa + "\n" + "NOTA INF "+registro.NotaInformativa + "\n"
 					}
 					]
 				},
@@ -3787,7 +3812,7 @@ export default {
 						columns: [
 						{
 							width: 130,
-							text: registro.NombreFactura
+							text: "FACT. "+registro.NombreFactura
 						},
 						{
 							width: 65,
@@ -4482,6 +4507,341 @@ export default {
 				pdfMake.createPdf(docDefinition).print();
 			}
 		},
+    ExportMatricialFR5(registro){
+      let docDefinition = {
+				pageSize: {
+					width: 630,
+					height: 800
+				},
+				defaultStyle: {
+					fontSize: 10,
+					bold: true
+				},
+				pageMargins: [ 11, 13, 10, 1 ],
+				info: {
+					title: "Fondo Rotatorio" + "-N°" + registro.NroRecibo,
+				},
+				content: [
+					{
+            text: "\n\n\n\n\n\n"
+					},
+					{
+					columns: [
+						{
+						width: 126,
+						text: " "
+						},
+						{
+						width: 318,
+						text: "Fondo Rotatorio",
+						alignment: "center",
+						},
+						{
+						columns:[
+							{ 
+							width: 43,
+							fontSize: 9,
+							text: registro.NroRecibo, alignment: "center"
+							},
+							{ 
+							width: 30,
+							fontSize: 9,
+							text: registro.dia, alignment: "center"
+							},
+							{ 
+							width: 26,
+							fontSize: 9,
+							text: registro.mes, alignment: "center"
+							},
+							{ 
+							width: 27,
+							fontSize: 9,
+							text: registro.anio, alignment: "center"
+							}
+						]
+						},
+					]
+					},
+					{ text: "\n\n\n\n\n\n" },
+					{
+					columns: [
+						{ 
+						width: 100,
+						text: "12010301"
+						},
+						{
+						width: 305,
+						text: " "
+						},
+						{
+						width: 60,
+						text: " "
+						},
+						{
+						width: 80,
+						text: registro.ImporteTotalBoleta.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+						alignment: "right"
+						}
+					],
+					},
+					{ text: "\n" },
+					{
+					columns: [
+					{ 
+						width: 100,
+						text: " "
+						},
+						{
+						width: 305,
+						text: "131612"
+						+ "          " +
+						"Medicina"
+						+ "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+						},
+						{
+						width: 60,
+						text: registro.listBoletas[0].ImporteUnitarioClasificador.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+						alignment: "right"
+						},
+						{
+						width: 80,
+						text: " "
+						}
+					]
+					},
+					{
+					columns: [
+						{
+						width: 60,
+						text: " "
+						},
+						{
+						width: 310,
+						text: "COMPROMISO DEL TRABAJADOR CARLOS HERRERA"+"\n" + "NOTA INF "+registro.NotaInformativa
+						}
+					]
+					},
+					{
+					columns: [
+						{
+						width: 60,
+						text: " "
+						},
+						{
+						width: 310,
+						columns: [
+							{
+							width: 195,
+							text: "ACTA DE COMPROMISO SIN/N°"
+							},
+							{
+							width: 13,
+							text: "S/."
+							},
+							{
+							width: 55,
+							text: "4,476.34",
+							alignment: "right"
+							},
+							{
+							width: "*",
+							text: " "
+							}
+						],
+						}
+					]
+					},
+					{
+					columns: [
+						{
+						width: 60,
+						text: " "
+						},
+						{
+						width: 310,
+						columns: [
+							{
+							width: 130,
+							text: "VOUCHER N° "+ registro.NroVoucher
+							},
+							{
+							width: 65,
+							text: "MONTO",
+							alignment: "center"
+							},
+							{
+							width: 13,
+							text: "S/."
+							},
+							{
+							width: 55,
+							text: registro.MontoVoucher.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+							alignment: "right"
+							},
+							{
+							width: "*",
+							text: " "
+							}
+						]
+						}
+					]
+					},
+					{
+					columns: [
+						{
+						width: 60,
+						text: " "
+						},
+						{
+						width: 310,
+						columns: [
+							{
+							width: 130,
+							text: "CH/N° "+ registro.NroCheque
+							},
+							{
+							width: 65,
+							text: "MONTO",
+							alignment: "center"
+							},
+							{
+							width: 13,
+							text: "S/."
+							},
+							{
+							width: 55,
+							text: registro.MontoCheque.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+							alignment: "right"
+							},
+							{
+							width: "*",
+							text: " "
+							}
+						]
+						}
+					]
+					},
+					{
+					columns: [
+						{
+						width: 60,
+						text: " "
+						},
+						{
+						width: 310,
+						text: "BANCO DE LA NACIÓN\n"+registro.NombreBanco+"\n"+
+                  "FARMACIA HOSPITAL ARZOBISPO LOAYZA"
+						}
+					]
+					},
+					{ text: "\n\n" },
+					{
+					columns: [
+						{
+						width: 55,
+						text: " "
+						},
+						{ 
+						width: "*",
+						text: 
+							"Base Imponible: 	S/." +
+							(registro.ImporteTotalBoleta -registro.MontoIgv).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) 
+							+ "            IGV  " + 
+							registro.Igv + "%:    " + " S/." + registro.MontoIgv.toFixed(2).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+						},
+						{
+						width: 100,
+						text: registro.ImporteTotalBoleta.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+						alignment: "right"
+						},
+						{
+						width: 60,
+						text: " "
+						}
+					],
+					},
+					{ text: "\n\n\n\n\n" },
+					{
+					columns: [
+						{ 
+						width: 5,
+						text: " "
+						},
+						{ text: "81       82" }
+					]
+					},
+					{ text: "\n\n\n\n\n\n\n\n\n" },
+					{
+					columns: [
+						{ 
+						width: 70,
+						text: "11010101" 
+						},
+						{ 
+						width: 90,
+						text: "CAJA MN" 
+						},
+						{ 
+						width: 70,
+						text: (registro.ImporteTotalBoleta -registro.MontoIgv).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+						alignment: "right"
+						},
+						{ 
+						width: "*",
+						text: " ",
+						},
+					]
+					},
+					{
+					columns: [
+						{ 
+						width: 70,
+						text: "2101010501" 
+						},
+						{ 
+						width: 90,
+						text: "IGV CTA. PROPIA" 
+						},
+						{ 
+						width: 70,
+						text: registro.MontoIgv.toFixed(2).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+						alignment: "right"
+						},
+						{ 
+						width: "*",
+						text: " ",
+						},
+					]
+					},
+					{
+					columns: [
+						{
+              width: 70,
+              text: "12010301" 
+						},
+						{ 
+              width: 90,
+              text: "VTA. DE BIENES" 
+						},
+						{ 
+              width: 70,
+              text: " "
+						},
+						{ 
+              width: 70,
+              text: registro.ImporteTotalBoleta.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+              alignment: "right"
+						},
+						{ 
+              width: "*",
+              text: " ",
+						},
+					]
+					}
+				]
+			}
+			pdfMake.createPdf(docDefinition).print();
+    },
 		formatDate(fecha){
 			return new Date(fecha).toLocaleDateString('es-PE', {
 				day: '2-digit',
@@ -4525,6 +4885,9 @@ export default {
 			}
 			if(data==14){
 				return "Otros pagos"
+			}
+      if(data==63){
+				return "Acta de Compromiso"
 			}
 		},
 		obtenerRegistros(){
