@@ -116,7 +116,7 @@
             <div class="field col-12">
               <label>Texto adicional</label>
               <Textarea v-model="TextoGlosa" placeholder="Ingrese texto adicional en la glosa" :autoResize="true"
-                rows="3" cols="30" />
+                rows="3" cols="30" maxlength="450" />
             </div>
             <div class="field col-12 grid">
               <div class="field col-12 md:col-8"></div>
@@ -329,7 +329,7 @@
               <div class="field col-12">
                 <label for="state">Texto adicional</label>
                 <Textarea v-model="TextoGlosa" placeholder="Ingrese texto adicional para la glosa" autoResize
-                  rows="3" cols="30" />
+                  rows="3" cols="30" maxlength="450" />
                   <label for="state">FARMACIA HOSPITAL ARZOBISPO LOAYZA</label>
                 </div>
               <div class="field col-12 md:col-8"></div>
@@ -499,7 +499,6 @@ export default {
       TipoRegistro: null,
       SubtipoIP: null,
       SubtipoFR: null,
-      Correlativo: [],
       ListaRegistros: [],
       listaBoletaJson: [],
       listaBoletaConvertida: [],
@@ -794,9 +793,9 @@ export default {
         Ano: anioFecha
       }
       this.formulario.obtenerCorrelativo(valor)
+      // await this.formulario.obtenerCorrelativo(valor)
       .then(data => {
-        this.Correlativo = data;
-        this.NroRecibo = this.Correlativo
+        this.NroRecibo = data;
       })
       .catch(error => {
         console.log(error)
@@ -868,7 +867,10 @@ export default {
           }
           if(!this.dialogIncompleto){
             const NroReciboAnterior = this.NroRecibo
+            console.log(NroReciboAnterior)
+            console.log(anioFecha)
             await this.obtenerCorrelativo(1,anioFecha)
+            console.log(this.NroRecibo)
             if(NroReciboAnterior!=this.NroRecibo){
               alert("El N° de recibo "+NroReciboAnterior+" ya existe, se cambio por el N° "+this.NroRecibo)
             }
@@ -1080,7 +1082,6 @@ export default {
             }
             if (!this.listaBoletaFormulario[i].ImporteUnitarioClasificador || !this.listaBoletaFormulario[i].Codigo.CodClasificadorArea || !this.listaBoletaFormulario[i].Descripcion) {
                 this.dialogIncompleto = true;
-                console.log("1")
                 break
               }
               else {
@@ -1095,7 +1096,6 @@ export default {
             }
             if (!this.listaBoletaFormulario[i].ImporteUnitarioClasificador || !this.listaBoletaFormulario[i].Descripcion || !this.listaBoletaFormulario[i].Codigo.CodClasificadorArea) {
               this.dialogIncompleto = true;
-              console.log("1.1")
               break
             }
             else {
@@ -1110,7 +1110,6 @@ export default {
             }
             if (!this.listaBoletaFormulario[i].ImporteUnitarioClasificador || !this.listaBoletaFormulario[i].Descripcion.CodClasificadorArea || !!this.listaBoletaFormulario[i].Descripcion) {
                 this.dialogIncompleto = true;
-                console.log("2.2")
                 break
               }
               else{
@@ -1125,7 +1124,6 @@ export default {
             }
             if (!this.listaBoletaFormulario[i].ImporteUnitarioClasificador || !this.listaBoletaFormulario[i].Descripcion || !this.listaBoletaFormulario[i].Descripcion.CodClasificadorArea) {
               this.dialogIncompleto = true;
-              console.log("2")
               break
             }
             else{
@@ -1134,7 +1132,6 @@ export default {
           }
           else{
             this.dialogIncompleto = true;
-            console.log("3")
             break
           }
         }

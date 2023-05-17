@@ -459,6 +459,9 @@ export default {
       const listMotivo = [];
       const listUsuario = [];
       let sumaImporteTotal = 0;
+			let sumaImporteMontoIgv = 0;
+			let sumaImporteValorVenta = 0;
+			let registrosAnulados=0;
       listaRegistros.map((element)=>{
         listNroRecibo.push(element.NroRecibo)
         listFecha.push(element.Fecha.slice(0,10))
@@ -470,11 +473,14 @@ export default {
         )
         if(!element.Anulado){
           sumaImporteTotal += parseFloat(element.ImporteTotalBoleta)
+					sumaImporteMontoIgv += parseFloat(element.MontoIgv)
+					sumaImporteValorVenta += (parseFloat(element.ImporteTotalBoleta)-parseFloat(element.MontoIgv))
           listAnulado.push(' ');
           listMotivo.push(' ')
           listUsuario.push(' ')
         }
         else{
+					registrosAnulados = 1;
           listAnulado.push('A')
           listMotivo.push(element.MotivoAnulacion.slice(0,20))
           listUsuario.push(element.UsuarioAnulacion.slice(0,10))
@@ -489,19 +495,20 @@ export default {
         }
       })
       if(valueReport.mes){
-        var date = new Date(valueReport.anio+"-"+valueReport.mes+"-"+"20");
-        var primerDia = new Date(date.getFullYear(), date.getMonth(), 1);
-        var ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-        primerDia = primerDia.toLocaleDateString('es-PE', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-        });
-        ultimoDia = ultimoDia.toLocaleDateString('es-PE', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-        });
+				var date = new Date(valueReport.anio+"-"+valueReport.mes+"-"+"20");
+			var primerDia = new Date(date.getFullYear(), date.getMonth(), 1);
+			var ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+			primerDia = primerDia.toLocaleDateString('es-PE', {
+				day: '2-digit',
+				month: '2-digit',
+				year: 'numeric',
+			});
+			ultimoDia = ultimoDia.toLocaleDateString('es-PE', {
+				day: '2-digit',
+				month: '2-digit',
+				year: 'numeric',
+			});
+				if(registrosAnulados==1){
         let docDefinition = {
           info: {
             title: "Reporte de Fondo Rotatorio",
@@ -546,7 +553,6 @@ export default {
             },
             { text: "\n"},
             {
-              // layout : 'headerLineOnly',
               table: {
                 widths: [37,65,"*","*","*",25,85,30,20,160,80],
                 body: [
@@ -659,9 +665,17 @@ export default {
                       text: sumaImporteTotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
                     },{},
                     {
-                      colSpan: 8,
-                      text: " "
-                    },{},{},{},{},{},{},{}
+						alignment: "right",  
+						text: sumaImporteMontoIgv.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+                    },
+					{
+						alignment: "right",  
+						text: sumaImporteValorVenta.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+					},
+					{
+						colSpan: 6,
+						text: ' '
+					},{},{},{},{},{}
                   ]
                 ]
               }
@@ -669,9 +683,160 @@ export default {
           ]
         };
         pdfMake.createPdf(docDefinition).open();
+				}
+				else{
+					let docDefinition = {
+          info: {
+            title: "Reporte de Fondo Rotatorio",
+          },
+          pageMargins: [ 20,40,20,150 ],
+          footer: function (currentPage, pageCount) {
+              return {
+                  margin: [550,100,0,0],
+                  text:currentPage.toString() + ' / ' + pageCount};
+          },
+          defaultStyle: {
+            fontSize: 10,
+            bold: true
+          },
+          content: [
+            {
+              columns: [
+                {
+                  width:"*",
+                  text: "HOSPITAL NACIONAL ARZOBISPO LOAYZA",
+                },
+                {
+                  width: 100,
+                  alignment: "right",
+                  text: "Emisión: "+fechaActual
+                }
+              ]
+            },
+            {
+              columns: [
+                {
+                  width: 130,
+                  text: "FONDO ROTATORIO"
+                },
+                {
+                  width: "*",
+                  alignment: "right",
+                  text: "Recibos de Ingreso desde "+primerDia +" hasta "+ultimoDia
+                }
+              ]
+            },
+            { text: "\n"},
+            {
+              table: {
+                widths: [37,65,"*","*","*",25,85,30],
+                body: [
+                  [
+                    {
+                      alignment: "center",
+                      text: "Nro"
+                    },
+                    {
+                      alignment: "center",
+                      text: "Fecha"
+                    },
+                    {
+                      alignment: "center",
+                      text: "Bruto"
+                    },
+                    {
+                      alignment: "center",
+                      text: "Imp. IGV"
+                    },
+                    {
+                      alignment: "center",
+                      text: "V. Venta"
+                    },
+                    {
+                      alignment: "center",
+                      text: "Cod"
+                    },
+                    {
+                      alignment: "center",
+                      text: "Tipo"
+                    },
+                    {
+                      alignment: "center",
+                      text: "IGV"
+                    }
+                  ],
+                  [
+                    {
+                      type: "none",
+                      ol: [listNroRecibo]
+                    },
+                    {
+                      type: "none",
+                      ol: [listFecha]
+                    },
+                    {
+                      alignment: "right",
+                      type: "none",
+                      ol: [listImporteTotalBoleta]
+                    },
+                    {
+                      alignment: "right",
+                      type: "none",
+                      ol: [listMontoIgv]
+                    },
+                    {
+                      alignment: "right",
+                      type: "none",
+                      ol: [listVenta]
+                    },
+                    {
+                      type: "none",
+                      ol: [listCod]
+                    },
+                    {
+                      type: "none",
+                      ol: [listDescripcion]
+                    },
+                    {
+                      alignment: "right",
+                      type: "none",
+                      ol: [listIgv]
+                    }
+                  ],
+                  [
+                    {
+                      alignment: "center",
+                      text: "Total"
+                    },
+                    {
+                      colSpan: 2,
+                      alignment: "right",  
+                      text: sumaImporteTotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+                    },{},
+                    {
+						alignment: "right",  
+						text: sumaImporteMontoIgv.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+                    },
+					{
+						alignment: "right",  
+						text: sumaImporteValorVenta.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+					},
+					{
+						colSpan: 3,
+						text: ' '
+					},{},{}
+                  ]
+                ]
+              }
+            }
+          ]
+        };
+        pdfMake.createPdf(docDefinition).open();
+				}
       }
       else{
-        let docDefinition = {
+				if(registrosAnulados==1){
+					let docDefinition = {
           info: {
             title: "Reporte de Fondo Rotatorio",
           },
@@ -841,6 +1006,160 @@ export default {
           ]
         };
         pdfMake.createPdf(docDefinition).open();
+				}
+				else{
+					let docDefinition = {
+          info: {
+            title: "Reporte de Fondo Rotatorio",
+          },
+          pageMargins: [ 20,40,20,150 ],
+          footer: function (currentPage, pageCount) {
+              return {
+                  margin: [550,100,0,0],
+                  text:currentPage.toString() + ' / ' + pageCount};
+          },
+          defaultStyle: {
+            fontSize: 10,
+            bold: true
+          },
+          content: [
+            {
+              columns: [
+                {
+                  width:"*",
+                  text: "HOSPITAL NACIONAL ARZOBISPO LOAYZA",
+                },
+                {
+                  width: 100,
+                  alignment: "right",
+                  text: "Emisión: "+fechaActual
+                }
+              ]
+            },
+            {
+              columns: [
+                {
+                  width: 130,
+                  text: "FONDO ROTATORIO"
+                },
+                {
+                  width: "*",
+                  alignment: "right",
+                  text: "Recibos de Ingreso del año "+valueReport.anio
+                }
+              ]
+            },
+            { text: "\n"},
+            {
+              table: {
+                widths: [37,65,"*","*","*",25,85,30],
+                body: [
+                  [
+                    {
+                      alignment: "center",
+                      text: "Nro"
+                    },
+                    {
+                      alignment: "center",
+                      text: "Fecha"
+                    },
+                    {
+                      alignment: "center",
+                      text: "Bruto"
+                    },
+                    {
+                      alignment: "center",
+                      text: "Imp. IGV"
+                    },
+                    {
+                      alignment: "center",
+                      text: "V. Venta"
+                    },
+                    {
+                      alignment: "center",
+                      text: "Cod"
+                    },
+                    {
+                      alignment: "center",
+                      text: "Tipo"
+                    },
+                    {
+                      alignment: "center",
+                      text: "IGV"
+                    }
+                  ],
+                  [
+                    {
+                      alignment: "center",
+                      type: "none",
+                      ol: [listNroRecibo]
+                    },
+                    {
+                      alignment: "center",
+                      type: "none",
+                      ol: [listFecha]
+                    },
+                    {
+                      alignment: "right",
+                      type: "none",
+                      ol: [listImporteTotalBoleta]
+                    },
+                    {
+                      alignment: "right",
+                      type: "none",
+                      ol: [listMontoIgv]
+                    },
+                    {
+                      alignment: "right",
+                      type: "none",
+                      ol: [listVenta]
+                    },
+                    {
+                      alignment: "center",
+                      type: "none",
+                      ol: [listCod]
+                    },
+                    {
+                      alignment: "center",
+                      type: "none",
+                      ol: [listDescripcion]
+                    },
+                    {
+                      alignment: "center",
+                      type: "none",
+                      ol: [listIgv]
+                    }
+                  ],
+                  [
+                    {
+                      alignment: "center",
+                      text: "Total"
+                    },
+                    {
+                      colSpan: 2,
+                      alignment: "right",  
+                      text: sumaImporteTotal.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+                    },{},
+                    {
+											alignment: "right",  
+                      text: sumaImporteMontoIgv.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+										},
+										{
+											alignment: "right",  
+                      text: sumaImporteValorVenta.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
+										},
+										{
+											colSpan: 3,
+											text: " "
+										},{},{}
+                  ]
+                ]
+              }
+            }
+          ]
+        };
+        pdfMake.createPdf(docDefinition).open();
+				}
       }
     },
     generarReporte(){
@@ -2737,6 +3056,352 @@ export default {
       };
       pdfMake.createPdf(docDefinition).print();
     },
+	ExportPDFFR5(registro){
+      let docDefinition = {
+					info: {
+						title: "Fondo Rotatorio" + "-N°" + registro.NroRecibo,
+					},
+					defaultStyle: {
+						fontSize: 10,
+						bold: true
+					},
+					content: [
+						{
+							columns: [
+								{
+								image: 'logo',
+								width: 80,
+								height: 70
+								},
+								{
+								width:"*",
+								text: "\nRECIBOS DE INGRESOS\n" + "Fondo Rotatorio\n",
+								alignment: "center",
+								bold: true,
+								fontSize: 20,
+								},
+								{
+								width: 145,
+								table:{
+									widths:[ 40,20,20,30 ],
+									body:[
+									[
+										{
+										text: "N°recibo",
+										alignment: "center",
+										fillColor: '#b5b1b1'
+										},
+										{
+										text: "Día",
+										alignment: "center",
+										fillColor: '#b5b1b1'
+										},
+										{
+										text: "Mes",
+										alignment: "center",
+										fillColor: '#b5b1b1'
+										},
+										{
+										text: "Año",
+										alignment: "center",
+										fillColor: '#b5b1b1'
+										}
+									],
+									[
+										{
+										text: registro.NroRecibo,
+										alignment: "center"
+										},
+										{
+										text: registro.dia,
+										alignment: "center"
+										},
+										{
+										text: registro.mes,
+										alignment: "center"
+										},
+										{
+										text: registro.anio,
+										alignment: "center"
+										}
+									]
+									]
+								}
+								}
+							]
+						},
+						{ text: "\n" },
+						{
+						table: {
+							widths: [50, "*", 50, 51],
+							heights: [10, 10, 270],
+							body: [
+							[
+								{
+								text: "Codigo",
+								rowSpan: 2,
+								alignment: "center",
+								bold: true,
+								fillColor: '#b5b1b1'
+								},
+								{
+								text: "Concepto",
+								rowSpan: 2,
+								alignment: "center",
+								bold: true,
+								fillColor: '#b5b1b1'
+								},
+								{
+								text: "Importe",
+								colSpan: 2,
+								alignment: "center",
+								bold: true,
+								fillColor: '#b5b1b1'
+								},
+								{},
+							],
+							[
+								{},
+								{},
+								{ text: "Parcial", alignment: "center", bold: true, fillColor:'#dedede' },
+								{ text: "Total", alignment: "center", bold: true, fillColor:'#dedede' },
+							],
+							[
+								{ text: "12010301" },
+								[
+                  {
+                    layout: 'noBorders',
+                    table: {
+                    widths: ["*"],
+                    heights: [10, 140],
+                    body: [
+                      [' '],
+                      [
+                        {
+                          text: "131612     Medicina"
+                        }
+                      ]
+                    ]
+                    },
+                  },
+                  {
+                    text: "COMPROMISO DEL TRABAJADOR CARLOS HERRERA"
+                  },
+                  {
+                    text: "NOTA INF "+registro.NotaInformativa
+                  },
+                  {
+                    columns:[
+                      { 
+                        width: 190,
+                        text: "ACTA DE COMPROMISO SIN/N°"
+                      },
+                      { 
+                        width: 20,
+                        alignment: "center",
+                        text: "S/." 
+                      },
+                      { 
+                        width: 55,
+                        alignment: "right",
+                        text: "4,476.34"
+                      }
+                    ]
+                  },
+                  {
+                    columns:[
+                      { 
+                        width: 130,
+                        text: "VOUCHER N°"+registro.NroVoucher
+                      },
+                      { 
+                        width: 60,
+                        alignment: "center",
+                        text: "MONTO" 
+                      },
+                      { 
+                        width: 20,
+                        alignment: "center",
+                        text: "S/." 
+                      },
+                      { 
+                        width: 55,
+                        alignment: "right",
+                        text: registro.MontoVoucher.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) 
+                      }
+                    ]
+                  },
+                  {
+                    columns:[
+                      { 
+                        width: 130,
+                        text: "CH/N°"+registro.NroCheque
+                      },
+                      { 
+                        width: 60,
+                        alignment: "center",
+                        text: "MONTO" 
+                      },
+                      { 
+                        width: 20,
+                        alignment: "center",
+                        text: "S/." 
+                      },
+                      { 
+                        width: 55,
+                        alignment: "right",
+                        text: registro.MontoCheque.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) 
+                      }
+                    ]
+                  },
+                  {
+                    text: "BANCO DE LA NACIÓN\n"+registro.NombreBanco+"\nFARMACIA HOSPITAL ARZOBISPO LOAYZA"
+                  }
+								],
+								[
+								{
+									layout: 'noBorders',
+									table: {
+									widths: ["*"],
+									heights: [10, 170],
+									body: [
+										[' '],
+										[
+										{
+											alignment: "right",
+											text: registro.listBoletas[0].ImporteUnitarioClasificador.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
+										}
+										]
+									]
+									},
+								}
+								],
+								{
+                  alignment: "right",
+                  text: registro.ImporteTotalBoleta.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
+								}
+							],
+							[
+								{},
+                {
+                  text: "Base Imponible:   S/."+(registro.ImporteTotalBoleta-registro.MontoIgv).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
+                  +"    IGV    "+registro.Igv+"%:   S/."+registro.MontoIgv.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
+                },
+                {},
+								{
+                  alignment: "right",
+                  text: registro.ImporteTotalBoleta.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
+								}
+							]
+							],
+						},
+						},
+						{ text: "\n" },
+						{
+						table: {
+							widths: ["*", "*", "*", "*"],
+							body: [
+							[
+								{
+								text: "CONTABILIDAD PATRIMONIAL",
+								alignment: "center",
+								colSpan: 4,
+								fillColor: '#b5b1b1'
+								},
+								{},
+								{},
+								{},
+							],
+							[
+								{ text: "CODIGO", alignment: "center", colSpan: 2, fillColor:'#dedede' },
+								{},
+								{ text: "IMPORTE", alignment: "center", colSpan: 2, fillColor:'#dedede' },
+								{},
+							],
+							[
+								{ text: "CUENTA MAYOR", alignment: "center", fillColor:'#dedede' },
+								{ text: "SUB-CUENTAS", alignment: "center", fillColor:'#dedede' },
+								{ text: "DEBE", alignment: "center", fillColor:'#dedede' },
+								{ text: "HABER", alignment: "center", fillColor:'#dedede' },
+							],
+							[
+								{ text: "11010101" },
+								{ text: "CAJA MN" },
+								{ text: (registro.ImporteTotalBoleta-registro.MontoIgv).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}), alignment: "right" },
+								{},
+							],
+							[
+								{ text: "2101010501" },
+								{ text: "IGV CTA. PROPIA" },
+								{ text: registro.MontoIgv.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}), alignment: "right" },
+								{},
+							],
+							[
+								{ text: "12010301" },
+								{ text: "VTA. DE BIENES" },
+								{},
+								{ text: registro.ImporteTotalBoleta.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}), alignment: "right" },
+							],
+							],
+						},
+						},
+						{ text: "\n" },
+						{
+						layout: "noBorders",
+						table: {
+							widths: [200, "*"],
+							body: [
+							[
+								{
+								table: {
+									widths: [50, 50],
+									body: [
+									[
+										{ text: "DEBE", alignment: "center",fillColor: '#b5b1b1' },
+										{ text: "HABER", alignment: "center",fillColor: '#b5b1b1' },
+									],
+									["81", "82"],
+									],
+								},
+								},
+								{
+								stack: [
+									{
+									fontSize: 10,
+									table: {
+										widths: ["*"],
+										heights: [70, 25, 70, 25],
+										body: [
+										[{ text: " ", alignment: "center" }],
+										[
+											{
+											text: "(1) JEFE DE LA OFICINA DE ECONOMÍA\n(SELLO Y FIRMA)",
+											alignment: "center",
+											},
+										],
+										[{ text: " ", alignment: "center" }],
+										[
+											{
+											text: "(2) CAJA GENERAL\n(SELLO Y FIRMA)",
+											alignment: "center",
+											},
+										],
+										],
+									},
+									},
+								],
+								},
+							],
+							],
+						},
+						},
+					],
+					images:{
+						logo:'data:image/png;base64,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',
+					}
+      };
+      pdfMake.createPdf(docDefinition).print();
+    },
 		imprimir(registro){
 			registro.dia = registro.Fecha.slice(8,10)
 			registro.mes =  registro.Fecha.slice(5,7);
@@ -2782,17 +3447,22 @@ export default {
 			}
     },
 		ExportMatricialFR1(registro){
+			// pdfMake.fonts={
+			// 	lucidaConsole:{
+			// 		normal: 'displayotf.otf',
+			// 		bold: 'displayotf.otf',
+			// 		italics: 'displayotf.otf',
+			// 		bolditalics: 'displayotf.otf',
+			// 	},
+			// }
 			if (registro.NroVoucher) {
 				let docDefinition = {
 				pageSize: {
 					width: 630,
 					height: 800
 				},
-				defaultStyle: {
-					fontSize: 10,
-					bold: true
-				},
-				pageMargins: [ 11, 13, 10, 1 ],
+				
+				pageMargins: [ 11, 7, 10, 1 ],
 				info: {
 					title: "Fondo Rotatorio" + "-N°" + registro.NroRecibo,
 				},
@@ -2815,34 +3485,37 @@ export default {
 						columns:[
 							{ 
 							width: 43,
-							fontSize: 9,
+							fontSize: 9.5,
+							// font: 'lucidaConsole',
 							text: registro.NroRecibo, alignment: "center"
 							},
 							{ 
 							width: 30,
-							fontSize: 9,
+							fontSize: 9.5,
 							text: registro.dia, alignment: "center"
 							},
 							{ 
 							width: 26,
-							fontSize: 9,
+							fontSize: 9.5,
 							text: registro.mes, alignment: "center"
 							},
 							{ 
 							width: 27,
-							fontSize: 9,
+							fontSize: 9.5,
 							text: registro.anio, alignment: "center"
 							}
 						]
 						},
 					]
 					},
-					{ text: "\n\n\n\n\n\n" },
+					{ text: "\n\n\n\n\n" },
 					{
 					columns: [
 						{ 
 						width: 100,
-						text: "12010301"
+						text: "12010301",
+						fontSize:12.5,
+						lineHeight: 4,
 						},
 						{
 						width: 305,
@@ -2854,12 +3527,13 @@ export default {
 						},
 						{
 						width: 80,
+						fontSize:12.5,
 						text: registro.ImporteTotalBoleta.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
 						alignment: "right"
 						}
 					],
 					},
-					{ text: "\n" },
+					// { text: "\n" },
 					{
 					columns: [
 					{ 
@@ -2868,13 +3542,15 @@ export default {
 						},
 						{
 						width: 305,
+						fontSize:12.6,
 						text: "131612"
 						+ "          " +
 						"Medicina"
-						+ "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+						+ "\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
 						},
 						{
 						width: 60,
+						fontSize:12.6,
 						text: registro.listBoletas[0].ImporteUnitarioClasificador.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
 						alignment: "right"
 						},
@@ -2892,37 +3568,17 @@ export default {
 						},
 						{
 						width: 310,
-						text: "VENTA DE MEDICAMENTOS AL CONTADO"
+						fontSize:12.4,
+						text: "VENTA DE MEDICAMENTOS AL CONTADO\n" +
+						"VOUCHER N° "+registro.NroVoucher + "   MONTO   S/."
+							+ registro.MontoVoucher.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})
+							+ "\nDEPOSITO EN EFECTIVO BANCO DE LA NACIÓN"+
+						"\nFARMACIA HOSPITAL ARZOBISPO LOAYZA"+"\n"
 						}
 					]
 					},
-					{
-					columns: [
-						{
-						width: 60,
-						text: " "
-						},
-						{
-						width: 310,
-						text:  "VOUCHER N° "+registro.NroVoucher + "   MONTO   S/."
-							+ registro.MontoVoucher.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
-						}
-					],
-					},
-					{
-					columns: [
-						{
-						width: 60,
-						text: " "
-						},
-						{
-						width: 310,
-						text: "DEPOSITO EN EFECTIVO BANCO DE LA NACIÓN"+
-						"\n"+"FARMACIA HOSPITAL ARZOBISPO LOAYZA"+"\n"
-						}
-					]
-					},
-					{ text: "\n\n" },
+					{ text: "\n\n\n",
+					lineHeight:2.3 },
 					{
 					columns: [
 						{
@@ -2931,14 +3587,16 @@ export default {
 						},
 						{ 
 						width: "*",
+						fontSize:12.6,
 						text: 
-							"Base Imponible: 	S/." +
+							"Base Imponible:   S/." +
 							(registro.ImporteTotalBoleta -registro.MontoIgv).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) 
-							+ "            IGV  " + 
+							+ "      IGV  " + 
 							registro.Igv + "%:    " + " S/." + registro.MontoIgv.toFixed(2).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
 						},
 						{
 						width: 100,
+						fontSize:12.6,
 						text: registro.ImporteTotalBoleta.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
 						alignment: "right"
 						},
@@ -2948,29 +3606,34 @@ export default {
 						}
 					],
 					},
-					{ text: "\n\n\n\n\n\n" },
+					{ text: "\n\n\n\n\n" },
 					{
 					columns: [
 						{ 
 						width: 5,
 						text: " "
 						},
-						{ text: "81       82" }
+						{ text: "81    82",
+						fontSize:12.4
+					}
 					]
 					},
-					{ text: "\n\n\n\n\n\n\n\n\n" },
+					{ text: "\n\n\n\n\n\n\n" },
 					{
 					columns: [
 						{ 
 						width: 70,
+						fontSize:12.6,
 						text: "11010101" 
 						},
 						{ 
-						width: 90,
+						width: 100,
+						fontSize:12.6,
 						text: "CAJA MN" 
 						},
 						{ 
 						width: 70,
+						fontSize:12.6,
 						text: (registro.ImporteTotalBoleta -registro.MontoIgv).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
 						alignment: "right"
 						},
@@ -2984,14 +3647,17 @@ export default {
 					columns: [
 						{ 
 						width: 70,
+						fontSize:12.6,
 						text: "2101010501" 
 						},
 						{ 
-						width: 90,
+						width: 110,
+						fontSize:12.6,
 						text: "IGV CTA. PROPIA" 
 						},
 						{ 
-						width: 70,
+						width: 60,
+						fontSize:12.6,
 						text: registro.MontoIgv.toFixed(2).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
 						alignment: "right"
 						},
@@ -3005,10 +3671,12 @@ export default {
 					columns: [
 						{
 						width: 70,
+						fontSize:12.5,
 						text: "12010301" 
 						},
 						{ 
-						width: 90,
+						width: 100,
+						fontSize:12.5,
 						text: "VTA. DE BIENES" 
 						},
 						{ 
@@ -3017,6 +3685,7 @@ export default {
 						},
 						{ 
 						width: 70,
+						fontSize:12.5,
 						text: registro.ImporteTotalBoleta.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
 						alignment: "right"
 						},
@@ -3026,7 +3695,13 @@ export default {
 						},
 					]
 					}
-				]
+				],
+				defaultStyle: {
+					fontSize: 12,
+					bold: true,
+					// font: 'lucidaConsole',
+					lineHeight:1.4
+				},
 				}
 				pdfMake.createPdf(docDefinition).print();
 			}
@@ -3190,7 +3865,7 @@ export default {
 						width: 5,
 						text: " "
 						},
-						{ text: "81       82" }
+						{ text: "81    82" }
 					]
 					},
 					{ text: "\n\n\n\n\n\n\n\n\n" },

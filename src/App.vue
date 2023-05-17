@@ -305,6 +305,8 @@ export default {
     },
     created() {
         this.supervisor = new Supervisor();
+        if(this.$store.state.isAuthenticated){this.$router.push({ path: '/home' })}
+        else{this.$router.push({ path: '/login' })}
         this.validarRoles();
     }
 }

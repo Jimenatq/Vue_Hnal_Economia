@@ -21,6 +21,16 @@ export default class IngresosPropios {
     return await axios 
       .post('/Report/ingpropios/poranio',valueReport).then(d => d.data);
   }
+
+  async getReporteExcelPorMesAnio(mes,anio) {
+    return await axios 
+      .get('/Report/excelpormesyanio/'+mes+'/'+anio).then(d => d.data);
+  }
+
+  async getReporteExcelPorAnio(anio) {
+    return await axios 
+      .get('/Report/excelporanio/'+anio).then(d => d.data);
+  }
   
   async getDescripcionClasificadoresImpresion(codClasificadorExterno) {
     return await axios 
