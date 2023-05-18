@@ -96,7 +96,7 @@
 				</DataTable>
 				<Dialog v-model:visible="registroDialog" :style="{width: '700px'}" header="Detalles del registro" :modal="true">
 					<div class="flex align-items-center justify-content-center">
-						<registro :title={registro} :editar={modoEditar} :actualizar={obtenerRegistros} :cerrarDialog={cerrarRegistro} :valorTipo={valorTipo} :tipoClasificadores={tipoClasificadores}
+						<registro :title={registro} :editar={modoEditar} :actualizar={obtenerRegistros} :cerrarDialog={cerrarRegistro} :valorTipo={valorTipo} :tipoClasificadores={tipoClasificadores} :registroManual={registroManual}
 							/>
 					</div>
 				</Dialog>
@@ -221,6 +221,8 @@ export default {
 			registro: null,
       //para que solo pueda registrar su tipo de registro (solo ingresos propios o fondo rotatorio)
       valorTipo: null,
+	//para saber si es registro manual
+      registroManual: false,
       //fin de los props
       reporteDialog: false,
       meses: [

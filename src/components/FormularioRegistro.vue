@@ -17,14 +17,18 @@
               placeholder="Seleccione tipo de ingreso" @change="cambioTipo()"></Dropdown>
               <!-- @date-select="cambioTipo($event)"  :locale="es"-->
           </div>
-          <div class="field col-2">
+          <div class="field col-3" v-if="!this.registroManual.registroManual || this.editar.modoEditar">
             <label for="state">N° Recibo</label>
             <InputText id="input-editar" disabled="true" v-model="NroRecibo" maxlength="5"/>
           </div>
-          <div class="field col-1 p-0">
+          <div class="field col-3" v-else>
+            <label for="state">N° Recibo</label>
+            <InputText id="input-editar" v-model="NroRecibo" maxlength="5"/>
+          </div>
+          <!-- <div class="field col-1 p-0">
             <Button id="button-editar" v-tooltip="'Editar N° recibo'" icon="pi pi-pencil" class="p-button-secondary mr-2 mt-1-8"
               @click="esSupervisorGlobal()" />
-          </div>
+          </div> -->
           <div class="field col-3">
             <label for="state">Fecha</label>
             <Calendar dateFormat="dd/mm/yy" :showIcon="true"  :showButtonBar="true" v-model="Fecha" required="true"
@@ -35,11 +39,12 @@
           <div class="field col-12 grid" v-if="ValueTipo.Codigo == 1">
             <div class="field col-12">
               <label for="email1">Subtipo</label>
-              <Dropdown id="state" v-model="ValueSubtipo" :options="SubtipoIP" required="true" optionLabel="Descripcion"
+              <Dropdown id="state" @change= cambioValorSubtipo(this.listaBoletaFormulario) v-model="ValueSubtipo" :options="SubtipoIP" required="true" optionLabel="Descripcion"
                 placeholder="Seleccione subtipo del registro" :class="{ 'p-invalid': enviar && !ValueSubtipo }" />
               <small class="p-invalid text-red" v-if="enviar && !ValueSubtipo">Este campo es requerido.</small>
             </div>
-            <div class="field col-12 grid mbo-0">
+            <div class="field col-12" v-if="ValueSubtipo.Codigo">
+              <div class="field col-12 grid mbo-0">
               <div class="field col-12 mb-0">
                 <br />
                 <h5 class="m-0 mb-5">CLASIFICADORES</h5>
@@ -54,7 +59,189 @@
                 <label for="email1">Importe de clasif.</label>
               </div>
             </div>
-            <div class="field col-12 grid" :key="i + 'neo'" v-for="(clasificador, i) of listaBoletaFormulario">
+            </div>
+            <!-- Penalidad -->
+            <div class="field col-12 grid" v-if="ValueSubtipo.Codigo == 2">
+              <div class="field col-12 grid" :key="i + 'neo'" v-for="(clasificador, i) of listaBoletaFormulario">
+                <div class="field col-12 md:col-4">
+                  <AutoComplete placeholder="Ingrese clasificador" id="dd" :dropdown="true" :multiple="false"
+                  v-model="clasificador.Codigo"  
+                  :suggestions="autoFilteredValue"
+                  @change="cambioCodigoClasificador($event, clasificador)" @complete="BuscarCodClasificadores($event)"
+                  field="CodClasificadorArea" :class="{ 'p-invalid': enviar && !clasificador.Codigo }" />
+                  <small class="p-invalid text-red" v-if="enviar && !clasificador.Codigo">Este campo es
+                    requerido.</small>
+                </div>
+                <div class="field col-12 md:col-4">
+                  <AutoComplete placeholder="Ingrese clasificador" id="dd" :dropdown="false" :multiple="false"
+                  v-model="clasificador.Descripcion"
+                   @change="cambioNombreClasificador($event, clasificador)"
+                  :suggestions="autoFilteredValue" @complete="BuscarNombreClasificadores($event)" field="Descripcion"
+                  :class="{ 'p-invalid': enviar && !clasificador.Descripcion }" />
+                  <small class="p-invalid text-red" v-if="enviar && !clasificador.Descripcion">Este campo es
+                    requerido.</small>
+                  </div>
+                    <div class="field col-12 md:col-3">
+                      <label for="email1">{{ asignarImporteClasificador(clasificador) }}</label>
+                      <InputNumber id="price" v-model="clasificador.ImporteUnitarioClasificador" mode="currency" 
+                      currency="PEN" locale="es-PE" @input="clasificador.ImporteUnitarioClasificador= $event.value, sumarImportes();"
+                      :class="{ 'p-invalid': enviar && !clasificador.ImporteUnitarioClasificador }" />
+                <small class="p-invalid text-red" v-if="enviar && !clasificador.ImporteUnitarioClasificador">Este campo
+                  es requerido.</small>
+                </div>
+                <div class="field col-12 md:col-1">
+                  <Button icon="pi pi-times" v-tooltip="'Eliminar clasificador'" class="p-button-danger mr-2" @click="eliminarMedicamento(i)" />
+              </div>
+              </div>
+              <div class="field col-12 grid">
+                <div class="field col-12 md:col-4"></div>
+                <div class="field col-12 md:col-4 alineacion">
+                  <label for="email1">Importe total</label>
+                </div>
+                <div class="field col-12 md:col-3">
+                  <InputNumber id="price" v-model="ImporteTotalBoleta" mode="currency" currency="PEN" disabled
+                    locale="es-PE" required="true " :class="{ 'p-invalid': enviar && !ImporteTotalBoleta }" />
+                  <small class="p-invalid text-red" v-if="enviar && !ImporteTotalBoleta">Este campo es
+                    requerido.</small>
+                </div>
+              </div>
+            </div>
+            <!-- protocolo -->
+            <div class="field col-12 grid" v-if="ValueSubtipo.Codigo == 4">
+              <div class="field col-12 grid" :key="i + 'neo'" v-for="(clasificador, i) of listaBoletaFormulario">
+                <div class="field col-12 md:col-4">
+                  <AutoComplete placeholder="Ingrese clasificador" id="dd" :dropdown="true" :multiple="false"
+                  v-model="clasificador.Codigo"  :suggestions="autoFilteredValue"
+                  @change="cambioCodigoClasificador($event, clasificador)" @complete="BuscarCodClasificadores($event)"
+                  field="CodClasificadorArea" :class="{ 'p-invalid': enviar && !clasificador.Codigo }" />
+                  <small class="p-invalid text-red" v-if="enviar && !clasificador.Codigo">Este campo es
+                    requerido.</small>
+                </div>
+                <div class="field col-12 md:col-4">
+                  <AutoComplete placeholder="Ingrese clasificador" id="dd" :dropdown="false" :multiple="false"
+                  v-model="clasificador.Descripcion" @change="cambioNombreClasificador($event, clasificador)"
+                  :suggestions="autoFilteredValue" @complete="BuscarNombreClasificadores($event)" field="Descripcion"
+                  :class="{ 'p-invalid': enviar && !clasificador.Descripcion }" />
+                  <small class="p-invalid text-red" v-if="enviar && !clasificador.Descripcion">Este campo es
+                    requerido.</small>
+                  </div>
+                    <div class="field col-12 md:col-3">
+                      <label for="email1">{{ asignarImporteClasificador(clasificador) }}</label>
+                <InputNumber id="price" v-model="clasificador.ImporteUnitarioClasificador" mode="currency" 
+                currency="PEN" locale="es-PE" @input="clasificador.ImporteUnitarioClasificador= $event.value, sumarImportes();"
+                :class="{ 'p-invalid': enviar && !clasificador.ImporteUnitarioClasificador }" />
+                <small class="p-invalid text-red" v-if="enviar && !clasificador.ImporteUnitarioClasificador">Este campo
+                  es requerido.</small>
+              </div>
+              <div class="field col-12 md:col-1">
+                <Button icon="pi pi-times" v-tooltip="'Eliminar clasificador'" class="p-button-danger mr-2" @click="eliminarMedicamento(i)" />
+              </div>
+              </div>
+              <div class="field col-12 grid">
+                <div class="field col-12 md:col-4"></div>
+                <div class="field col-12 md:col-4 alineacion">
+                  <label for="email1">Importe total</label>
+                </div>
+                <div class="field col-12 md:col-3">
+                  <InputNumber id="price" v-model="ImporteTotalBoleta" mode="currency" currency="PEN" disabled
+                    locale="es-PE" required="true " :class="{ 'p-invalid': enviar && !ImporteTotalBoleta }" />
+                  <small class="p-invalid text-red" v-if="enviar && !ImporteTotalBoleta">Este campo es
+                    requerido.</small>
+                </div>
+              </div>
+            </div>
+            <!-- detraccion -->
+            <div class="field col-12 grid" v-if="ValueSubtipo.Codigo == 5">
+              <div class="field col-12 grid" :key="i + 'neo'" v-for="(clasificador, i) of listaBoletaFormulario">
+                <div class="field col-12 md:col-4">
+                  <AutoComplete placeholder="Ingrese clasificador" id="dd" :dropdown="true" :multiple="false"
+                  v-model="clasificador.Codigo"  :suggestions="autoFilteredValue"
+                  @change="cambioCodigoClasificador($event, clasificador)" @complete="BuscarCodClasificadores($event)"
+                  field="CodClasificadorArea" :class="{ 'p-invalid': enviar && !clasificador.Codigo }" />
+                  <small class="p-invalid text-red" v-if="enviar && !clasificador.Codigo">Este campo es
+                    requerido.</small>
+                </div>
+                <div class="field col-12 md:col-4">
+                  <AutoComplete placeholder="Ingrese clasificador" id="dd" :dropdown="false" :multiple="false"
+                  v-model="clasificador.Descripcion" @change="cambioNombreClasificador($event, clasificador)"
+                  :suggestions="autoFilteredValue" @complete="BuscarNombreClasificadores($event)" field="Descripcion"
+                  :class="{ 'p-invalid': enviar && !clasificador.Descripcion }" />
+                  <small class="p-invalid text-red" v-if="enviar && !clasificador.Descripcion">Este campo es
+                    requerido.</small>
+                  </div>
+                    <div class="field col-12 md:col-3">
+                      <label for="email1">{{ asignarImporteClasificador(clasificador) }}</label>
+                <InputNumber id="price" v-model="clasificador.ImporteUnitarioClasificador" mode="currency" 
+                currency="PEN" locale="es-PE" @input="clasificador.ImporteUnitarioClasificador= $event.value, sumarImportes();"
+                :class="{ 'p-invalid': enviar && !clasificador.ImporteUnitarioClasificador }" />
+                <small class="p-invalid text-red" v-if="enviar && !clasificador.ImporteUnitarioClasificador">Este campo
+                  es requerido.</small>
+              </div>
+              <div class="field col-12 md:col-1">
+                <Button icon="pi pi-times" v-tooltip="'Eliminar clasificador'" class="p-button-danger mr-2" @click="eliminarMedicamento(i)" />
+              </div>
+              </div>
+              <div class="field col-12 grid">
+                <div class="field col-12 md:col-4"></div>
+                <div class="field col-12 md:col-4 alineacion">
+                  <label for="email1">Importe total</label>
+                </div>
+                <div class="field col-12 md:col-3">
+                  <InputNumber id="price" v-model="ImporteTotalBoleta" mode="currency" currency="PEN" disabled
+                    locale="es-PE" required="true " :class="{ 'p-invalid': enviar && !ImporteTotalBoleta }" />
+                  <small class="p-invalid text-red" v-if="enviar && !ImporteTotalBoleta">Este campo es
+                    requerido.</small>
+                </div>
+              </div>
+            </div>
+            <!-- otros servicios -->
+            <div class="field col-12 grid" v-if="ValueSubtipo.Codigo == 6">
+              <div class="field col-12 grid" :key="i + 'neo'" v-for="(clasificador, i) of listaBoletaFormulario">
+                <div class="field col-12 md:col-4">
+                  <AutoComplete placeholder="Ingrese clasificador" id="dd" :dropdown="true" :multiple="false"
+                  v-model="clasificador.Codigo"  :suggestions="autoFilteredValue"
+                  @change="cambioCodigoClasificador($event, clasificador)" @complete="BuscarCodClasificadores($event)"
+                  field="CodClasificadorArea" :class="{ 'p-invalid': enviar && !clasificador.Codigo }" />
+                  <small class="p-invalid text-red" v-if="enviar && !clasificador.Codigo">Este campo es
+                    requerido.</small>
+                </div>
+                <div class="field col-12 md:col-4">
+                  <AutoComplete placeholder="Ingrese clasificador" id="dd" :dropdown="false" :multiple="false"
+                  v-model="clasificador.Descripcion" @change="cambioNombreClasificador($event, clasificador)"
+                  :suggestions="autoFilteredValue" @complete="BuscarNombreClasificadores($event)" field="Descripcion"
+                  :class="{ 'p-invalid': enviar && !clasificador.Descripcion }" />
+                  <small class="p-invalid text-red" v-if="enviar && !clasificador.Descripcion">Este campo es
+                    requerido.</small>
+                  </div>
+                    <div class="field col-12 md:col-3">
+                      <label for="email1">{{ asignarImporteClasificador(clasificador) }}</label>
+                <InputNumber id="price" v-model="clasificador.ImporteUnitarioClasificador" mode="currency" 
+                currency="PEN" locale="es-PE" @input="clasificador.ImporteUnitarioClasificador= $event.value, sumarImportes();"
+                :class="{ 'p-invalid': enviar && !clasificador.ImporteUnitarioClasificador }" />
+                <small class="p-invalid text-red" v-if="enviar && !clasificador.ImporteUnitarioClasificador">Este campo
+                  es requerido.</small>
+              </div>
+              <div class="field col-12 md:col-1">
+                <Button icon="pi pi-times" v-tooltip="'Eliminar clasificador'" class="p-button-danger mr-2" @click="eliminarMedicamento(i)" />
+              </div>
+              </div>
+              <div class="field col-12 grid">
+                <div class="field col-12 md:col-4"></div>
+                <div class="field col-12 md:col-4 alineacion">
+                  <label for="email1">Importe total</label>
+                </div>
+                <div class="field col-12 md:col-3">
+                  <InputNumber id="price" v-model="ImporteTotalBoleta" mode="currency" currency="PEN" disabled
+                    locale="es-PE" required="true " :class="{ 'p-invalid': enviar && !ImporteTotalBoleta }" />
+                  <small class="p-invalid text-red" v-if="enviar && !ImporteTotalBoleta">Este campo es
+                    requerido.</small>
+                </div>
+              </div>
+            </div>
+            <!-- el resto de subtipos  -->
+            <div class="field col-12 grid" v-if="ValueSubtipo.Codigo == 1 || ValueSubtipo.Codigo == 3
+            ||ValueSubtipo.Codigo == 7||ValueSubtipo.Codigo == 8">
+              <div class="field col-12 grid" :key="i + 'neo'" v-for="(clasificador, i) of listaBoletaFormulario">
               <div class="field col-12 md:col-4">
                 <AutoComplete placeholder="Ingrese clasificador" id="dd" :dropdown="true" :multiple="false"
                   v-model="clasificador.Codigo" :suggestions="autoFilteredValue"
@@ -82,23 +269,24 @@
               <div class="field col-12 md:col-1">
                 <Button icon="pi pi-times" v-tooltip="'Eliminar clasificador'" class="p-button-danger mr-2" @click="eliminarMedicamento(i)" />
               </div>
-            </div>
-            <div class="field col-12 grid">
-              <div class="field col-12 md:col-4">
-                <Button v-tooltip="'Añadir clasificador'" icon="pi pi-plus" class="p-button-success m-0"
-                  @click="aniadirElemento()" />
               </div>
-              <div class="field col-12 md:col-4 alineacion">
-                <label  class="mb-7" for="quantity">Monto de Devolución</label>
-                <label for="email1">Importe total</label>
-              </div>
-              <div class="field col-12 md:col-3">
-                <InputNumber class="mb-5" id="price" v-model="MontoDevolucion" mode="currency" currency="PEN" locale="es-PE" max="999999" 
-                  @input="MontoDevolucion= $event.value, sumarImportes();"/>
-                <InputNumber id="price" v-model="ImporteTotalBoleta" mode="currency" currency="PEN" disabled
-                  locale="es-PE" required="true " :class="{ 'p-invalid': enviar && !ImporteTotalBoleta }" />
-                <small class="p-invalid text-red" v-if="enviar && !ImporteTotalBoleta">Este campo es
-                  requerido.</small>
+              <div class="field col-12 grid">
+                <div class="field col-12 md:col-4">
+                  <Button v-tooltip="'Añadir clasificador'" icon="pi pi-plus" class="p-button-success m-0"
+                    @click="aniadirElemento()" />
+                </div>
+                <div class="field col-12 md:col-4 alineacion">
+                  <label  class="mb-7" for="quantity">Monto de Devolución</label>
+                  <label for="email1">Importe total</label>
+                </div>
+                <div class="field col-12 md:col-3">
+                  <InputNumber class="mb-5" id="price" v-model="MontoDevolucion" mode="currency" currency="PEN" locale="es-PE" max="999999" 
+                    @input="MontoDevolucion= $event.value, sumarImportes();"/>
+                  <InputNumber id="price" v-model="ImporteTotalBoleta" mode="currency" currency="PEN" disabled
+                    locale="es-PE" required="true " :class="{ 'p-invalid': enviar && !ImporteTotalBoleta }" />
+                  <small class="p-invalid text-red" v-if="enviar && !ImporteTotalBoleta">Este campo es
+                    requerido.</small>
+                </div>
               </div>
             </div>
             <div class="field col-12">
@@ -489,7 +677,8 @@ export default {
     actualizar: Function,
     cerrarDialog: Function,
     valorTipo: String,
-    tipoClasificadores: String
+    tipoClasificadores: String,
+    registroManual: String
   },
   data() {
     return {
@@ -578,6 +767,20 @@ export default {
   supervisor: null,
   formulario: null,
   methods: {
+    cambioValorSubtipo(clasificador){
+      if(this.ValueSubtipo.Codigo == 2){
+        clasificador[0].Codigo= { "IdParametro": 98, "Codigo": null, "CodClasificadorArea": 1522199, "CodClasificadorExterno": 1522199, "Descripcion": "Otras sanciones" };
+        clasificador[0].Descripcion ={"Descripcion": "Otras sanciones"}
+      }
+      else if(this.ValueSubtipo.Codigo == 4||this.ValueSubtipo.Codigo == 5){
+        clasificador[0].Codigo= { "IdParametro": 99, "Codigo": null, "CodClasificadorArea": 133923, "CodClasificadorExterno": 133923, "Descripcion": "Servicio de investigación y desarrollo" };
+        clasificador[0].Descripcion ={"Descripcion": "Servicio de investigación y desarrollo"}
+      }
+      else if(this.ValueSubtipo.Codigo == 6){
+        clasificador[0].Codigo= { "IdParametro": 97, "Codigo": null, "CodClasificadorArea": 1339199, "CodClasificadorExterno": 1339199, "Descripcion": "Servicios por administración y recaudación" };
+        clasificador[0].Descripcion ={"Descripcion": "Servicios por administración y recaudación"}
+      }
+    },
     //si inicia sesion con usuario supervisor no pedira credenciales para nada
     esSupervisorGlobal(){
       const username = {
@@ -792,8 +995,8 @@ export default {
         IdParametro: value,
         Ano: anioFecha
       }
-      this.formulario.obtenerCorrelativo(valor)
-      // await this.formulario.obtenerCorrelativo(valor)
+      // this.formulario.obtenerCorrelativo(valor)
+      await this.formulario.obtenerCorrelativo(valor)
       .then(data => {
         this.NroRecibo = data;
       })
@@ -844,7 +1047,7 @@ export default {
                 break
               }
               else {
-                  this.listaBoletaJson.push(clasif);
+                this.listaBoletaJson.push(clasif);
               }
             }
             else if (this.listaBoletaFormulario[i].Descripcion.IdParametro) {
@@ -866,13 +1069,12 @@ export default {
             }
           }
           if(!this.dialogIncompleto){
-            const NroReciboAnterior = this.NroRecibo
-            console.log(NroReciboAnterior)
-            console.log(anioFecha)
-            await this.obtenerCorrelativo(1,anioFecha)
-            console.log(this.NroRecibo)
-            if(NroReciboAnterior!=this.NroRecibo){
-              alert("El N° de recibo "+NroReciboAnterior+" ya existe, se cambio por el N° "+this.NroRecibo)
+            if(!this.registroManual.registroManual){
+              const NroReciboAnterior = this.NroRecibo
+              await this.obtenerCorrelativo(1,anioFecha)
+              if(NroReciboAnterior!=this.NroRecibo){
+                alert("El N° de recibo "+NroReciboAnterior+" ya existe, se cambio por el N° "+this.NroRecibo)
+              }
             }
             const registro = {
               IdParametroTipo: this.ValueTipo.IdParametro,
@@ -916,7 +1118,13 @@ export default {
               this.formulario.modificarCorrelativo(valor)
             })
             .catch(err => {
-              this.message = err;
+              console.log(err)
+              if(err.response.data.InnerException.Message){
+                this.message = err.response.data.InnerException.Message;
+              }
+              else{
+                this.message = err;
+              }
               this.mensajeErrorDialog = true;
             })
           }
@@ -1081,12 +1289,12 @@ export default {
               ImporteUnitarioClasificador: this.listaBoletaFormulario[i].ImporteUnitarioClasificador
             }
             if (!this.listaBoletaFormulario[i].ImporteUnitarioClasificador || !this.listaBoletaFormulario[i].Codigo.CodClasificadorArea || !this.listaBoletaFormulario[i].Descripcion) {
-                this.dialogIncompleto = true;
-                break
-              }
-              else {
-                  this.listaOpcional2.push(elem)
-              }
+              this.dialogIncompleto = true;
+              break
+            }
+            else {
+              this.listaOpcional2.push(elem)
+            }
           }
           else if (!this.listaBoletaFormulario[i].Codigo.IdParametro) {
             const elem = {

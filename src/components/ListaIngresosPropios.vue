@@ -10,6 +10,7 @@
           <template v-slot:start>
               <div class="my-2">
 							<Button label="Nuevo Registro" v-tooltip="'Agregar nuevo registro'" icon="pi pi-plus" class="p-button-success mr-2" @click="nuevoRegistro()" />
+              <Button label="Nuevo Registro Manual" v-tooltip="'Agregar nuevo registro manual'" icon="pi pi-plus" class="p-button-secondary mr-2" @click="nuevoRegistroManual()" />
 						</div>
 					</template>
 
@@ -97,7 +98,7 @@
 				</DataTable>
 				<Dialog v-model:visible="registroDialog" :style="{width: '700px'}" header="Detalles del registro" :modal="true">
 					<div class="flex align-items-center justify-content-center">
-						<registro :title={registro} :editar={modoEditar} :actualizar={obtenerRegistros} :cerrarDialog={cerrarRegistro} :valorTipo={valorTipo} :tipoClasificadores={tipoClasificadores}
+						<registro :title={registro} :editar={modoEditar} :actualizar={obtenerRegistros} :cerrarDialog={cerrarRegistro} :valorTipo={valorTipo} :tipoClasificadores={tipoClasificadores} :registroManual={registroManual}
 							/>
 					</div>
 				</Dialog>
@@ -222,6 +223,8 @@ export default {
 			registro: null,
       //para que solo pueda registrar su tipo de registro (solo ingresos propios o fondo rotatorio)
       valorTipo: null,
+      //para saber si es registro manual
+      registroManual: false,
       //fin de los props
 			reporteDialog: false,
       meses: [
@@ -287,7 +290,8 @@ export default {
       clave: null,
       motivoDialog: null,
       cargandoSupervisor: false,
-      ingresoCredenciales: false
+      ingresoCredenciales: false,
+      
 		}
 	},
   supervisor: null,
@@ -4817,12 +4821,25 @@ export default {
         Codigo: 1,
         Descripcion: "Ingresos Propios"
       }
+      this.registroManual = false;
+			this.registroDialog = true;
+		},
+    nuevoRegistroManual(){
+			this.modoEditar = false;
+			this.tipoClasificadores = 5;
+      this.valorTipo={
+        IdParametro: 1,
+        Codigo: 1,
+        Descripcion: "Ingresos Propios"
+      }
+      this.registroManual = true;
 			this.registroDialog = true;
 		},
 		cerrarRegistro(){
 			this.registroDialog=false;
 		}
 	},
+
 	created(){
     this.noLogin();
     this.supervisor = new Supervisor();
