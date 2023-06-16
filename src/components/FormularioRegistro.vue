@@ -16,14 +16,14 @@
             <Dropdown id="state" v-model="ValueTipo" :options="TipoRegistro" optionLabel="Descripcion" required="true"
               placeholder="Seleccione tipo de ingreso" @change="cambioTipo()"></Dropdown>
               <!-- @date-select="cambioTipo($event)"  :locale="es"-->
-          </div>
-          <div class="field col-3" v-if="!this.registroManual.registroManual || this.editar.modoEditar">
+            </div>
+            <div class="field col-3" v-if="(this.registroManual.registroManual && ValueTipo.Codigo==1)||(this.editar.modoEditar&& ValueTipo.Codigo==1)">
+              <label for="state">N° Recibo</label>
+              <InputText id="input-editar" v-model="NroRecibo" maxlength="5"/>
+            </div>
+            <div class="field col-3" v-else>
             <label for="state">N° Recibo</label>
             <InputText id="input-editar" disabled="true" v-model="NroRecibo" maxlength="5"/>
-          </div>
-          <div class="field col-3" v-else>
-            <label for="state">N° Recibo</label>
-            <InputText id="input-editar" v-model="NroRecibo" maxlength="5"/>
           </div>
           <!-- <div class="field col-1 p-0">
             <Button id="button-editar" v-tooltip="'Editar N° recibo'" icon="pi pi-pencil" class="p-button-secondary mr-2 mt-1-8"
@@ -303,7 +303,7 @@
             </div>
             <div class="field col-12">
               <label>Texto adicional</label>
-              <Textarea v-model="TextoGlosa" placeholder="Ingrese texto adicional en la glosa" :autoResize="true"
+              <Textarea v-model="TextoGlosa" placeholder="Ingrese texto adicional en la glosa." :autoResize="true"
                 rows="3" cols="30" maxlength="450" />
             </div>
             <div class="field col-12 grid">
@@ -391,10 +391,6 @@
                 <label for="state">Monto voucher</label>
                 <InputNumber id="price" v-model="MontoVoucher" mode="currency" currency="PEN" locale="es-PE"  max="99999"/>
               </div>
-              <!-- <div class="field col-12 md:col-6">
-                <label for="state">Nombre de Banco</label>
-                <InputText id="quantity" v-model="NombreBanco" />
-              </div> -->
               <div class="field col-12">
                 <label for="state">DEPOSITO EN EFECTIVO BANCO DE LA NACIÓN
                   <br/>FARMACIA HOSPITAL ARZOBISPO LOAYZA</label>
@@ -428,13 +424,17 @@
                 <label for="state">Importe de deposito</label>
                 <InputNumber id="price" v-model="ImporteDeposito" mode="currency" currency="PEN" locale="es-PE" max="99999" />
               </div>
-              <div class="field col-12 md:col-6">
-                <label for="state">Importe de ingresos propios</label>
+              <div class="field col-12 md:col-4">
+                <label for="state">Importe de Ingresos Propios</label>
                 <InputNumber id="price" v-model="ImporteTotalTipoIP" mode="currency" currency="PEN" locale="es-PE" max="99999" />
               </div>
-              <div class="field col-12 md:col-6">
-                <label for="state">Importe de Fondos Rotatorios</label>
+              <div class="field col-12 md:col-4">
+                <label for="state">Imp. de Fondos Rotatorios</label>
                 <InputNumber id="price" v-model="ImporteTotalTipoFR" mode="currency" currency="PEN" locale="es-PE" max="99999" />
+              </div>
+              <div class="field col-12 md:col-4">
+                <label for="state">Sobrante de Ing. Propios</label>
+                <InputNumber id="price" v-model="SobranteIngPropios" mode="currency" currency="PEN" locale="es-PE" max="99999" />
               </div>
               <div class="field col-12 md:col-3">
                 <label for="state">N° Voucher</label>
@@ -502,6 +502,10 @@
                 <label for="state">Monto de Nota de Abono</label>
                 <InputNumber id="price" v-model="MontoNotaAbono" mode="currency" currency="PEN" locale="es-PE" max="99999" />
               </div>
+              <div class="field col-12 md:col-4">
+                <label for="state">Sobrante de Ing. Propios</label>
+                <InputNumber id="price" v-model="SobranteIngPropios" mode="currency" currency="PEN" locale="es-PE" max="99999" />
+              </div>
               <div class="field col-12">
                 <label for="state">FARMACIA HOSPITAL ARZOBISPO LOAYZA</label>
               </div>
@@ -516,7 +520,7 @@
             <div class="field col-12 grid" v-if="ValueSubtipo.Codigo == 4">
               <div class="field col-12">
                 <label for="state">Texto adicional</label>
-                <Textarea v-model="TextoGlosa" placeholder="Ingrese texto adicional para la glosa" autoResize
+                <Textarea v-model="TextoGlosa" placeholder="Ingrese texto adicional para la glosa. (Max 9 lineas)" autoResize
                   rows="3" cols="30" maxlength="450" />
                   <label for="state">FARMACIA HOSPITAL ARZOBISPO LOAYZA</label>
                 </div>
@@ -727,6 +731,7 @@ export default {
       MontoNotaAbono: null,
       NombreBanco: null,
       TextoGlosa: null,
+      SobranteIngPropios: null,
       UsuarioCreacion: this.$store.state.userName,
       FechaCreacion: new Date(),
       UsuarioModificacion: null,
@@ -1100,6 +1105,7 @@ export default {
               MontoNotaAbono: this.MontoNotaAbono,
               NombreBanco: this.NombreBanco,
               TextoGlosa: this.TextoGlosa,
+              SobranteIngPropios: this.SobranteIngPropios,
               UsuarioCreacion: this.UsuarioCreacion,
               FechaCreacion: this.FechaCreacion,
               UsuarioModificacion: this.UsuarioModificacion,
@@ -1111,11 +1117,14 @@ export default {
             .then(async() => {
               this.ingresoDialog = true;
               await this.actualizar.obtenerRegistros();
-              const valor = {
-                IdParametro: 1,
-                Ano: anioFecha
+              //si es un registro manual no debera modificar el n° de correlativo
+              if(!this.registroManual.registroManual){
+                const valor = {
+                  IdParametro: 1,
+                  Ano: anioFecha
+                }
+                this.formulario.modificarCorrelativo(valor)
               }
-              this.formulario.modificarCorrelativo(valor)
             })
             .catch(err => {
               console.log(err)
@@ -1197,6 +1206,7 @@ export default {
               MontoNotaAbono: this.MontoNotaAbono,
               NombreBanco: this.NombreBanco,
               TextoGlosa: this.TextoGlosa,
+              SobranteIngPropios: this.SobranteIngPropios,
               UsuarioCreacion: this.UsuarioCreacion,
               FechaCreacion: this.FechaCreacion,
               UsuarioModificacion: this.UsuarioModificacion,
@@ -1403,6 +1413,7 @@ export default {
         MontoNotaAbono: this.MontoNotaAbono,
         NombreBanco: this.NombreBanco,
         TextoGlosa: this.TextoGlosa,
+        SobranteIngPropios: this.SobranteIngPropios,
         UsuarioCreacion: this.UsuarioCreacion,
         FechaCreacion: this.FechaCreacion,
         UsuarioModificacion: this.UsuarioModificacion,
@@ -4499,6 +4510,7 @@ export default {
         this.MontoNotaAbono = this.title.registro.MontoNotaAbono,
         this.NombreBanco = this.title.registro.NombreBanco,
         this.TextoGlosa = this.title.registro.TextoGlosa,
+        this.SobranteIngPropios= this.title.registro.SobranteIngPropios,
         this.UsuarioCreacion = this.title.registro.UsuarioCreacion,
         this.FechaCreacion = this.title.registro.FechaCreacion,
         this.UsuarioModificacion = this.$store.state.userName,
