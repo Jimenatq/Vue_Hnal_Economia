@@ -5295,7 +5295,7 @@ export default {
 						},
 						{
 						width: 305,
-						fontSize:12.6,
+						fontSize:12.5,
 						text: "131612"
 						+ "          " +
 						"Medicina"
@@ -5303,7 +5303,7 @@ export default {
 						},
 						{
 						width: 60,
-						fontSize:12.6,
+						fontSize:12.5,
 						text: registro.listBoletas[0].ImporteUnitarioClasificador.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
 						alignment: "right"
 						},
@@ -5321,7 +5321,7 @@ export default {
 						},
 						{
 						width: 310,
-						fontSize:12.5,
+						fontSize:12.7,
 						text: registro.NombreEmpresa + "\n" + "NOTA INF "+registro.NotaInformativa
 						}
 					]
@@ -5334,25 +5334,29 @@ export default {
 						},
 						{
 						width: 310,
-						fontSize:12.5,
+						fontSize:12.6,
 						columns: [
 							{
 							width: 140,
-							text: "FACT. "+registro.NombreFactura
+							text: "FACT. "+registro.NombreFactura,
+							// fontSize:12.4,
 							},
 							{
 							width: 75,
 							text: registro.dd + "/" + registro.mm + "/" + registro.aa,
-							alignment: "center"
+							alignment: "center",
+							// fontSize:12.5,
 							},
 							{
 							width: 18,
-							text: "S/."
+							text: "S/.",
+							// fontSize:12.6,
 							},
 							{
 							width: 60,
 							text: registro.ImporteDeposito.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
-							alignment: "right"
+							alignment: "right",
+							// fontSize:12.6,
 							},
 							{
 							width: "*",
@@ -5370,7 +5374,7 @@ export default {
 						},
 						{
 						width: 310,
-						fontSize:12.7,
+						fontSize:12.5,
 						columns: [
 							{
 							width: 140,
@@ -5406,7 +5410,7 @@ export default {
 						},
 						{
 						width: 310,
-						fontSize:12.6,
+						fontSize:12.5,
 						columns: [
 							{
 							width: 215,
@@ -5437,7 +5441,7 @@ export default {
 						},
 						{
 						width: 310,
-						fontSize:12.65,
+						fontSize:12.6,
 						columns: [
 							{
 							width: 140,
@@ -5473,7 +5477,7 @@ export default {
 						},
 						{
 						width: 310,
-						fontSize:12.3,
+						fontSize:12.4,
 						columns: [
 							{
 							width: 140,
@@ -5545,7 +5549,7 @@ export default {
 						},
 						{
 						width: 310,
-						fontSize:12.5,
+						fontSize:12.6,
 						text: registro.NombreBanco + "\nFARMACIA HOSPITAL ARZOBISPO LOAYZA"
 						}
 					]
@@ -5585,7 +5589,7 @@ export default {
 						width: 5,
 						text: " "
 						},
-						{ text: "81    82" ,fontSize:12.4 }
+						{ text: "81    82" ,fontSize:12.5 }
 					]
 					},
 					{ text: "\n\n\n\n\n\n\n\n" },
@@ -5593,17 +5597,17 @@ export default {
 					columns: [
 						{ 
 						width: 70,
-						fontSize:12.6,
+						fontSize:12.7,
 						text: "11010101" 
 						},
 						{ 
 						width: 95,
-						fontSize:12.6,
+						fontSize:12.7,
 						text: "CAJA MN" 
 						},
 						{ 
 						width: 70,
-						fontSize:12.6,
+						fontSize:12.7,
 						text: (registro.ImporteTotalBoleta -registro.MontoIgv).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
 						alignment: "right"
 						},
@@ -6168,7 +6172,7 @@ export default {
 					},
 					{
 						width: 310,
-						fontSize:12.5,
+						fontSize:12.6,
 						text: registro.NombreEmpresa + "\n" + "NOTA INF "+registro.NotaInformativa + "\n"
 					}
 					]
@@ -6181,7 +6185,7 @@ export default {
 					},
 					{
 						width: 310,
-						fontSize:12.6,
+						fontSize:12.5,
 						columns: [
 						{
 							width: 140,
@@ -6284,7 +6288,7 @@ export default {
 					},
 					{
 						width: 310,
-						fontSize:12.4,
+						fontSize:12.5,
 						columns: [
 						{
 							width: 140,
@@ -6320,7 +6324,7 @@ export default {
 					},
 					{
 						width: 310,
-						fontSize:12.4,
+						fontSize:12.6,
 						columns: [
 						{
 							width: 140,
@@ -6404,17 +6408,17 @@ export default {
 					columns: [
 					{ 
 						width: 70,
-						fontSize:12.63,
+						fontSize:12.7,
 						text: "11010101" 
 					},
 					{ 
 						width: 95,
-						fontSize:12.63,
+						fontSize:12.7,
 						text: "CAJA MN" 
 					},
 					{ 
 						width: 65,
-						fontSize:12.63,
+						fontSize:12.7,
 						text: (registro.ImporteTotalBoleta -registro.MontoIgv).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}),
 						alignment: "right"
 					},
