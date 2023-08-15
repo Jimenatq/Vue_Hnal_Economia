@@ -223,7 +223,6 @@ export default {
   },
 	methods: {
     validarRoles(){
-      console.log(this.$store.state.userName)
       if(this.$store.state.isAuthenticated){
         const username = {
           Usuario: this.$store.state.userName
@@ -231,7 +230,6 @@ export default {
         this.supervisor.getListaRolesPorUsuario(username)
         .then(data=>{
           this.listaRoles = data;
-          console.log(data)
           if(this.listaRoles.length==0){
             this.$router.push({ path: '/access' })
           }

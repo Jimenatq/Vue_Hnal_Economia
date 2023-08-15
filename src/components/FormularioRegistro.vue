@@ -312,7 +312,7 @@
                 <Button label="Modificar registro" class="p-button-success mt-3 mr-2 mb-2" @click="editarRegistro()" />
               </div>
               <div v-else class="field col-12 md:col-4">
-                <Button label="Guardar registro" class="p-button-success mt-3 mr-2 mb-2" @click="GuardarRegistro()" />
+                <Button label="Guardar registro" id="GuarReg" class="p-button-success mt-3 mr-2 mb-2" @click="GuardarRegistro()" />
               </div>
             </div>
           </div>
@@ -521,7 +521,7 @@
               <div class="field col-12">
                 <label for="state">Texto adicional</label>
                 <Textarea v-model="TextoGlosa" placeholder="Ingrese texto adicional para la glosa. (Max 9 lineas)" autoResize
-                  rows="3" cols="30" maxlength="450" />
+                  rows="3" cols="30" maxlength="450" style="font-weight: bold; font-size: 16px; font-family: roboto;" />
                   <label for="state">FARMACIA HOSPITAL ARZOBISPO LOAYZA</label>
                 </div>
               <div class="field col-12 md:col-8"></div>
@@ -1074,6 +1074,8 @@ export default {
             }
           }
           if(!this.dialogIncompleto){
+            let bloquearBoton = document.getElementById('GuarReg');
+            bloquearBoton.disabled=true;
             if(!this.registroManual.registroManual){
               const NroReciboAnterior = this.NroRecibo
               await this.obtenerCorrelativo(1,anioFecha)
