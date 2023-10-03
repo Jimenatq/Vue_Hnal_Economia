@@ -533,19 +533,22 @@
               </div>
             </div>
             <div class="field col-12 grid" v-if="ValueSubtipo.Codigo == 5">
-              <div class="field col-12">
-                <label for="state">COMPROMISO DEL TRABAJADOR CARLOS HERRERA</label>
+              <div class="field col-3">
+                <label for="state">COMPROMISO</label>
+              </div>
+              <div class="field col-9">
+                <InputText v-model="NombreCompromiso" maxlength="100"/>
               </div>
               <div class="field col-12">
-                <label for="state">Nota de Informativa</label>
+                <label for="state">Nombre del Documento</label>
                 <InputText id="quantity" v-model="NotaInformativa" maxlength="45"/>
               </div>
-              <div class="field col-12">
-                <label for="state">ACTA DE COMPROMISO SIN/N° 
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  S/. 4,476.34</label>
+              <div class="field col-8">
+                <label>ACTA DE COMPROMISO SIN/N°</label>
+              </div>
+              <div class="field col-4">
+                <label>Monto del Compromiso</label>
+                <InputNumber id="price" v-model="MontoCompromiso" mode="currency" currency="PEN" locale="es-PE" maxlength="9"/>
               </div>
               <div class="field col-12 md:col-3">
                 <label for="state">N° Voucher</label>
@@ -564,9 +567,12 @@
                 <InputNumber id="price" v-model="MontoCheque" mode="currency" currency="PEN" locale="es-PE" max="99999"/>
               </div>
               <div class="field col-12">
-                <label for="state">BANCO DE LA NACIÓN</label><BR />
+                <label>Nombre de Banco</label><BR />
+                <InputText id="quantity" v-model="NombreBanco" maxlength="80"/>
+              </div>
+              <div class="field col-12">
                 <label for="state">N° de Cuota</label>
-                <InputText id="quantity" v-model="NombreBanco" maxlength="30"/>
+                <InputText id="quantity" v-model="NumeroCuota" maxlength="20"/>
                 <label for="state">FARMACIA HOSPITAL ARZOBISPO LOAYZA</label>
               </div>
               <div class="field col-12 md:col-8"></div>
@@ -588,7 +594,7 @@
           </div>
         </div>
         <template #footer>
-          <Button label="Imprimir" icon="pi pi-fw pi-file" class="p-button-text" @click="exportMatricial" />
+          <!-- <Button label="Imprimir" icon="pi pi-fw pi-file" class="p-button-text" @click="exportMatricial" /> -->
           <Button label="Aceptar" icon="pi pi-fw pi-check" class="p-button-text" @click="closeDialog" />
         </template>
       </Dialog>
@@ -736,6 +742,9 @@ export default {
       FechaCreacion: new Date(),
       UsuarioModificacion: null,
       FechaModificacion: null,
+      NombreCompromiso: null,
+      MontoCompromiso: null,
+      NumeroCuota: null,
       Anulado: false,
       //
       IdRegistro: '',
@@ -1112,6 +1121,9 @@ export default {
               FechaCreacion: this.FechaCreacion,
               UsuarioModificacion: this.UsuarioModificacion,
               FechaModificacion: this.FechaModificacion,
+              NombreCompromiso: this.NombreCompromiso,
+              MontoCompromiso: this.MontoCompromiso,
+              NumeroCuota: this.NumeroCuota,
               listBoletas: this.listaBoletaJson,
             };
 
@@ -1213,6 +1225,9 @@ export default {
               FechaCreacion: this.FechaCreacion,
               UsuarioModificacion: this.UsuarioModificacion,
               FechaModificacion: this.FechaModificacion,
+              NombreCompromiso: this.NombreCompromiso,
+              MontoCompromiso: this.MontoCompromiso,
+              NumeroCuota: this.NumeroCuota,
               listBoletas: this.listaBoletaJson,
             };
             this.formulario.guardarRegistro(registro)
@@ -1420,6 +1435,9 @@ export default {
         FechaCreacion: this.FechaCreacion,
         UsuarioModificacion: this.UsuarioModificacion,
         FechaModificacion: this.FechaModificacion,
+        NombreCompromiso: this.NombreCompromiso,
+        MontoCompromiso: this.MontoCompromiso,
+        NumeroCuota: this.NumeroCuota,
         Anulado: this.Anulado,
         listBoletas: this.listaOpcional2
       }
@@ -4517,6 +4535,9 @@ export default {
         this.FechaCreacion = this.title.registro.FechaCreacion,
         this.UsuarioModificacion = this.$store.state.userName,
         this.FechaModificacion = new Date(),
+        this.NombreCompromiso= this.title.registro.NombreCompromiso,
+        this.MontoCompromiso= this.title.registro.MontoCompromiso,
+        this.NumeroCuota= this.title.registro.NumeroCuota,
         this.Anulado = this.title.registro.Anulado
         this.listaBoletaFormulario =await Promise.all(this.title.registro.listBoletas.map(async (element) => {
         var detalle = await this.formulario.getDetalleClasificador(element.IdParametro)
