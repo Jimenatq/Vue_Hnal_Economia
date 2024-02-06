@@ -9140,12 +9140,12 @@ export default {
             {
             width: 310,
             fontSize:12.4,
-            text: "BANCO DE LA NACIÓN\n"+registro.NombreBanco+"\n"+
-                  "FARMACIA HOSPITAL ARZOBISPO LOAYZA"
+            text: registro.NombreBanco+"\n"+
+                  "FARMACIA HOSPITAL ARZOBISPO LOAYZA\n"
             }
           ]
           },
-          { text: "\n" ,lineHeight:2.3},
+          { text: "\n\n" ,lineHeight:2.3},
           {
           columns: [
             {

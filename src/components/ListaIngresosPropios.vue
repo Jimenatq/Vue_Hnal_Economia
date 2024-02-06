@@ -5995,6 +5995,14 @@ export default {
       }
     },
     imprimirMatricial(registro,listCodClasif,listDescripClasif,listImpUniClasif){
+      pdfMake.fonts={
+        lucidaConsole:{
+          normal: 'displayotf.otf',
+          bold: 'displayotf.otf',
+          italics: 'displayotf.otf',
+          bolditalics: 'displayotf.otf',
+        },
+      }
       if (registro.NroCheque && registro.TextoGlosa) {
         let docDefinition = {
           pageSize: {
@@ -6002,8 +6010,9 @@ export default {
             height: 800
           },
           defaultStyle: {
-            fontSize: 10,
-            bold: true
+            fontSize: 12,
+            font: 'lucidaConsole',
+            lineHeight:1.4
           },
           pageMargins: [ 11, 13, 10, 1 ],
           info: {
@@ -6011,7 +6020,7 @@ export default {
           },
           content: [
             {
-              text: "\n\n\n\n\n\n"
+              text: "\n\n\n\n"
             },
             {
               columns: [
@@ -6069,7 +6078,7 @@ export default {
               columns: [
               {
                   width: 80,
-                  text: "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+                  text: "\n\n\n\n\n\n\n\n\n\n\n\n\n"
                 },
                 {
                   width: 60,
@@ -6110,7 +6119,7 @@ export default {
               columns: [
                 {
                   width: 60,
-                  text: "\n\n\n\n\n\n\n"
+                  text: "\n\n\n\n\n\n\n\n\n\n\n"
                 },
                 {
                   width: 310,
@@ -6118,7 +6127,6 @@ export default {
                 }
               ]
             },
-            { text: "\n" },
             {
               columns: [
                 {
@@ -6140,7 +6148,7 @@ export default {
                 }
               ],
             },
-            { text: "\n\n\n\n\n\n\n" },
+            { text: "\n\n\n\n\n\n" },
             {
               columns: [
                 { 
@@ -6150,7 +6158,7 @@ export default {
                 { text: "81       82" }
               ]
             },
-            { text: "\n\n\n\n\n\n\n\n" },
+            { text: "\n\n\n\n\n\n\n" },
             {
               columns: [
                 { 
@@ -6179,7 +6187,7 @@ export default {
                   text: "2101010501" 
                 },
                 { 
-                  width: 90,
+                  width: 100,
                   text: "IGV CTA. PROPIA" 
                 },
                 { 
@@ -6230,7 +6238,8 @@ export default {
           },
           defaultStyle: {
             fontSize: 10,
-            bold: true
+            font: 'lucidaConsole',
+            lineHeight:1.4
           },
           pageMargins: [ 11, 13, 10, 1 ],
           info: {
@@ -6456,8 +6465,9 @@ export default {
             height: 800
           },
           defaultStyle: {
-            fontSize: 10,
-            bold: true
+            fontSize: 12,
+            font: 'lucidaConsole',
+            lineHeight:1.4
           },
           pageMargins: [ 11, 13, 10, 1 ],
           info: {
@@ -6504,7 +6514,7 @@ export default {
                 },
               ]
             },
-            { text: "\n\n\n\n\n\n" },
+            { text: "\n\n\n\n\n" },
             {
               columns: [
                 { 
@@ -6523,7 +6533,7 @@ export default {
               columns: [
               {
                   width: 80,
-                  text: "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+                  text: "\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
                 },
                 {
                   width: 60,
@@ -6552,7 +6562,7 @@ export default {
               columns: [
                 {
                   width: 60,
-                  text: "\n\n\n\n\n\n\n\n"
+                  text: "\n\n\n\n\n\n\n\n\n\n"
                 },
                 {
                   width: 310,
@@ -6560,7 +6570,6 @@ export default {
                 }
               ]
             },
-            { text: "\n" },
             {
               columns: [
                 {
@@ -6582,7 +6591,7 @@ export default {
                 }
               ],
             },
-            { text: "\n\n\n\n\n\n\n" },
+            { text: "\n\n\n\n\n\n" },
             {
               columns: [
                 { 
@@ -6592,7 +6601,7 @@ export default {
                 { text: "81       82" }
               ]
             },
-            { text: "\n\n\n\n\n\n\n\n" },
+            { text: "\n\n\n\n\n\n\n" },
             {
               columns: [
                 { 
@@ -6600,7 +6609,7 @@ export default {
                   text: "11010101" 
                 },
                 { 
-                  width: 90,
+                  width: 110,
                   text: "CAJA MN" 
                 },
                 { 
@@ -6621,7 +6630,7 @@ export default {
                   text: "2101010501" 
                 },
                 { 
-                  width: 90,
+                  width: 100,
                   text: "IGV CTA. PROPIA" 
                 },
                 { 
@@ -6642,7 +6651,7 @@ export default {
                   text: "12010301" 
                 },
                 { 
-                  width: 90,
+                  width: 110,
                   text: "VTA. DE BIENES" 
                 },
                 { 
@@ -6671,8 +6680,9 @@ export default {
             height: 800
           },
           defaultStyle: {
-            fontSize: 10,
-            bold: true
+            fontSize: 12,
+            font: 'lucidaConsole',
+            lineHeight:1.4
           },
           pageMargins: [ 11, 13, 10, 1 ],
           info: {
@@ -6719,7 +6729,7 @@ export default {
                 },
               ]
             },
-            { text: "\n\n\n\n\n\n" },
+            { text: "\n\n\n\n\n" },
             {
               columns: [
                 { 
@@ -6738,7 +6748,7 @@ export default {
               columns: [
               {
                   width: 80,
-                  text: "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+                  text: "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
                 },
                 {
                   width: 60,
@@ -6797,7 +6807,7 @@ export default {
                 }
               ],
             },
-            { text: "\n\n\n\n\n\n\n" },
+            { text: "\n\n\n\n\n\n" },
             {
               columns: [
                 { 
@@ -6807,7 +6817,7 @@ export default {
                 { text: "81       82" }
               ]
             },
-            { text: "\n\n\n\n\n\n\n\n" },
+            { text: "\n\n\n\n\n\n\n" },
             {
               columns: [
                 { 
@@ -6836,7 +6846,7 @@ export default {
                   text: "2101010501" 
                 },
                 { 
-                  width: 90,
+                  width: 100,
                   text: "IGV CTA. PROPIA" 
                 },
                 { 
