@@ -1478,6 +1478,14 @@ export default {
       }
     },
     imprimirPDF(registro,listCodClasif,listDescripClasif,listImpUniClasif){
+      pdfMake.fonts={
+        Roboto:{
+          normal: 'Roboto-Bold.ttf',
+          bold: 'Roboto-Bold.ttf',
+          italics: 'Roboto-Bold.ttf',
+          bolditalics: 'Roboto-Bold.ttf',
+        },
+      }
       if(registro.Anulado==false){
         if (registro.NroCheque && registro.TextoGlosa&&registro.IdParametroSubtipo==3) {
           let docDefinition = {
@@ -5995,6 +6003,14 @@ export default {
       }
     },
     imprimirMatricial(registro,listCodClasif,listDescripClasif,listImpUniClasif){
+      pdfMake.fonts={
+        Roboto:{
+          normal: 'Roboto-Light.ttf',
+          bold: 'Roboto-Light.ttf',
+          italics: 'Roboto-Light.ttf',
+          bolditalics: 'Roboto-Light.ttf',
+        },
+      }
       if (registro.NroCheque && registro.TextoGlosa) {
         let docDefinition = {
           pageSize: {
@@ -6002,16 +6018,16 @@ export default {
             height: 800
           },
           defaultStyle: {
-            fontSize: 10,
+            fontSize: 12,
             bold: false
           },
-          pageMargins: [ 11, 13, 10, 1 ],
+          pageMargins: [ 11, 18, 10, 1 ],
           info: {
             title: "Ingresos Propios" + "-N°" + registro.NroRecibo,
           },
           content: [
             {
-              text: "\n\n\n\n\n\n"
+              text: "\n\n\n\n"
             },
             {
               columns: [
@@ -6050,7 +6066,7 @@ export default {
                 },
               ]
             },
-            { text: "\n\n\n\n\n\n" },
+            { text: "\n\n\n\n\n" },
             {
               columns: [
                 { 
@@ -6069,7 +6085,7 @@ export default {
               columns: [
               {
                   width: 80,
-                  text: "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+                  text: "\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
                 },
                 {
                   width: 60,
@@ -6083,13 +6099,13 @@ export default {
                   ol: [listDescripClasif]
                 },
                 {
-                  width: 60,
+                  width: 70,
                   alignment: "right",
                   type: "none",
                   ol: [listImpUniClasif]
                 },
                 {
-                  width: 80,
+                  width: 70,
                   text: " "
                 }
               ]
@@ -6140,7 +6156,7 @@ export default {
                 }
               ],
             },
-            { text: "\n\n\n\n\n\n\n" },
+            { text: "\n\n\n\n\n" },
             {
               columns: [
                 { 
@@ -6179,7 +6195,7 @@ export default {
                   text: "2101010501" 
                 },
                 { 
-                  width: 90,
+                  width: 100,
                   text: "IGV CTA. PROPIA" 
                 },
                 { 
@@ -6229,16 +6245,16 @@ export default {
             height: 800
           },
           defaultStyle: {
-            fontSize: 10,
+            fontSize: 12,
             bold: false
           },
-          pageMargins: [ 11, 13, 10, 1 ],
+          pageMargins: [ 11, 18, 10, 1 ],
           info: {
             title: "Ingresos Propios" + "-N°" + registro.NroRecibo,
           },
           content: [
             {
-              text: "\n\n\n\n\n\n"
+              text: "\n\n\n\n"
             },
             {
               columns: [
@@ -6277,7 +6293,7 @@ export default {
                 },
               ]
             },
-            { text: "\n\n\n\n\n\n" },
+            { text: "\n\n\n\n\n" },
             {
               columns: [
                 { 
@@ -6310,13 +6326,13 @@ export default {
                   ol: [listDescripClasif]
                 },
                 {
-                  width: 60,
+                  width: 70,
                   alignment: "right",
                   type: "none",
                   ol: [listImpUniClasif]
                 },
                 {
-                  width: 80,
+                  width: 70,
                   text: " "
                 }
               ]
@@ -6337,7 +6353,7 @@ export default {
               columns: [
                 {
                   width: 60,
-                  text: "\n\n\n\n\n\n\n"
+                  text: "\n\n"
                 },
                 {
                   width: 310,
@@ -6367,7 +6383,7 @@ export default {
                 }
               ],
             },
-            { text: "\n\n\n\n\n\n\n" },
+            { text: "\n\n\n\n\n" },
             {
               columns: [
                 { 
@@ -6406,7 +6422,7 @@ export default {
                   text: "2101010501" 
                 },
                 { 
-                  width: 90,
+                  width: 100,
                   text: "IGV CTA. PROPIA" 
                 },
                 { 
@@ -6456,16 +6472,16 @@ export default {
             height: 800
           },
           defaultStyle: {
-            fontSize: 10,
+            fontSize: 12,
             bold: false
           },
-          pageMargins: [ 11, 13, 10, 1 ],
+          pageMargins: [ 11, 18, 10, 1 ],
           info: {
             title: "Ingresos Propios" + "-N°" + registro.NroRecibo,
           },
           content: [
             {
-              text: "\n\n\n\n\n\n"
+              text: "\n\n\n\n"
             },
             {
               columns: [
@@ -6504,7 +6520,7 @@ export default {
                 },
               ]
             },
-            { text: "\n\n\n\n\n\n" },
+            { text: "\n\n\n\n\n" },
             {
               columns: [
                 { 
@@ -6523,7 +6539,7 @@ export default {
               columns: [
               {
                   width: 80,
-                  text: "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+                  text: "\n\n\n\n\n\n\n\n\n"
                 },
                 {
                   width: 60,
@@ -6537,13 +6553,13 @@ export default {
                   ol: [listDescripClasif]
                 },
                 {
-                  width: 60,
+                  width: 70,
                   alignment: "right",
                   type: "none",
                   ol: [listImpUniClasif]
                 },
                 {
-                  width: 80,
+                  width: 70,
                   text: " "
                 }
               ]
@@ -6552,7 +6568,7 @@ export default {
               columns: [
                 {
                   width: 60,
-                  text: "\n\n\n\n\n\n\n\n"
+                  text: "\n\n\n\n\n\n\n\n\n\n\n\n"
                 },
                 {
                   width: 310,
@@ -6582,7 +6598,7 @@ export default {
                 }
               ],
             },
-            { text: "\n\n\n\n\n\n\n" },
+            { text: "\n\n\n\n\n" },
             {
               columns: [
                 { 
@@ -6621,7 +6637,7 @@ export default {
                   text: "2101010501" 
                 },
                 { 
-                  width: 90,
+                  width: 100,
                   text: "IGV CTA. PROPIA" 
                 },
                 { 
@@ -6642,7 +6658,7 @@ export default {
                   text: "12010301" 
                 },
                 { 
-                  width: 90,
+                  width: 100,
                   text: "VTA. DE BIENES" 
                 },
                 { 
@@ -6671,16 +6687,16 @@ export default {
             height: 800
           },
           defaultStyle: {
-            fontSize: 10,
+            fontSize: 12,
             bold: false
           },
-          pageMargins: [ 11, 13, 10, 1 ],
+          pageMargins: [ 11, 18, 10, 1 ],
           info: {
             title: "Ingresos Propios" + "-N°" + registro.NroRecibo,
           },
           content: [
             {
-              text: "\n\n\n\n\n\n"
+              text: "\n\n\n\n"
             },
             {
               columns: [
@@ -6719,7 +6735,7 @@ export default {
                 },
               ]
             },
-            { text: "\n\n\n\n\n\n" },
+            { text: "\n\n\n\n\n" },
             {
               columns: [
                 { 
@@ -6752,13 +6768,13 @@ export default {
                   ol: [listDescripClasif]
                 },
                 {
-                  width: 60,
+                  width: 70,
                   alignment: "right",
                   type: "none",
                   ol: [listImpUniClasif]
                 },
                 {
-                  width: 80,
+                  width: 70,
                   text: " "
                 }
               ]
@@ -6767,7 +6783,7 @@ export default {
               columns: [
                 {
                   width: 60,
-                  text: "\n\n\n\n\n\n\n\n"
+                  text: "\n\n\n"
                 },
                 {
                   width: 310,
@@ -6797,7 +6813,7 @@ export default {
                 }
               ],
             },
-            { text: "\n\n\n\n\n\n\n" },
+            { text: "\n\n\n\n\n" },
             {
               columns: [
                 { 
@@ -6836,7 +6852,7 @@ export default {
                   text: "2101010501" 
                 },
                 { 
-                  width: 90,
+                  width: 100,
                   text: "IGV CTA. PROPIA" 
                 },
                 { 
